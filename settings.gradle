@@ -14,3 +14,14 @@ dependencyResolutionManagement {
 }
 rootProject.name = "MercedesBenzTask"
 include ':app'
+include ':core'
+include ':ui'
+include ':data'
+include ':domain'
+include ':data:datastore'
+include ':data:database'
+include ':ui:carlist'
+include ':core:model'
+include ':core:common'
+include ':core:designsystem'
+include ':data:network'
