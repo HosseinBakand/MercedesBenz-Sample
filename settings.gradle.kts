@@ -13,4 +13,12 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "MercedesBenzTask"
-include ':app'
+include(":app")
+include(":core")
+include(":ui")
+include(":data")
+include(":domain")
+include(":ui:carlist")
+include(":core:model")
+include(":core:common")
+include(":core:designsystem")
