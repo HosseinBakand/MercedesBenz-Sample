@@ -7,6 +7,7 @@ object Versions {
     const val activity = "1.5.1"
     const val core = "1.10.1"
     const val compose = "1.2.1"
+//    const val composeMaterial3 = "1.1.0-alpha06"
     const val composeBom = "2022.10.00"
     const val coroutines = "1.6.4"
     const val hilt = "2.46.1"

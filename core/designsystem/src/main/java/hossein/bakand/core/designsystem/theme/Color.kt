@@ -1,4 +1,4 @@
-package hossein.bakand.mercedesbenz_task.ui.theme
+package hossein.bakand.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -52,13 +52,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:designsystem"))
+
     implementation(Libraries.CoreKtx)
-    implementation(Libraries.ComposeActivity)
-    implementation(Libraries.ComposeUi)
-    implementation(Libraries.ComposeUiGraphic)
-    implementation(Libraries.ComposeTooling)
-    implementation(Libraries.ComposeToolingPreview)
-    implementation(Libraries.ComposeMaterial)
     implementation(platform(Libraries.KotlinBom))
     implementation(platform(Libraries.ComposeBom))
     implementation(Libraries.Lifecycle)

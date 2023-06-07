@@ -36,4 +36,11 @@ android {
 }
 
 dependencies {
+    api(Libraries.ComposeActivity)
+    api(Libraries.ComposeUi)
+    api(Libraries.ComposeUiGraphic)
+    api(Libraries.ComposeTooling)
+    api(Libraries.ComposeToolingPreview)
+    api(Libraries.ComposeMaterial)
+    api("androidx.compose.material3:material3")
 }
