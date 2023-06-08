@@ -1,4 +1,4 @@
-package hossein.bakand.core.designsystem.component
+package hossein.bakand.core.commonui.component
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.LocalAbsoluteTonalElevation
@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import hossein.bakand.core.designsystem.theme.LocalBackgroundTheme
+import hossein.bakand.core.commonui.theme.LocalBackgroundTheme
 
 @Composable
 fun MercedesBenzBackground(

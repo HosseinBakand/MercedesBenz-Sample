@@ -8,25 +8,26 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import hossein.bakand.core.designsystem.component.MercedesBenzBackground
-import hossein.bakand.core.designsystem.theme.MercedesBenzTheme
+import androidx.navigation.compose.rememberNavController
+import hossein.bakand.core.commonui.component.MercedesBenzBackground
+import hossein.bakand.core.commonui.theme.MercedesBenzTheme
 import hossein.bakand.mercedesbenz_task.navigation.MercedesBenzNavHost
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
 @Composable
 fun MercedesBenzApp() {
-        MercedesBenzTheme {
-            MercedesBenzBackground() {
-                Scaffold(
-                    modifier = Modifier
-                        .navigationBarsPadding(),
-                ) {
-                    MercedesBenzNavHost(
-
-                        )
-                }
+    MercedesBenzTheme {
+        MercedesBenzBackground() {
+            Scaffold(
+                modifier = Modifier
+                    .navigationBarsPadding(),
+            ) {
+                MercedesBenzNavHost(
+                    navController = rememberNavController()
+                )
             }
         }
+    }
 
 }

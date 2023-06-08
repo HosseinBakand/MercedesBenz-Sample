@@ -1,4 +1,4 @@
-package hossein.bakand.core.designsystem.theme
+package hossein.bakand.core.commonui.theme
 
 import androidx.compose.ui.graphics.Color
 
