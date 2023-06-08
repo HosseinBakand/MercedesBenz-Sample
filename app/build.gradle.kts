@@ -38,10 +38,11 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.2"
+        kotlinCompilerExtensionVersion = "1.4.5"
     }
 
     packagingOptions {
@@ -52,13 +53,10 @@ android {
 }
 
 dependencies {
+
+    implementation(project(":core:common-ui"))
+    implementation(project(":ui:carlist"))
     implementation(Libraries.CoreKtx)
-    implementation(Libraries.ComposeActivity)
-    implementation(Libraries.ComposeUi)
-    implementation(Libraries.ComposeUiGraphic)
-    implementation(Libraries.ComposeTooling)
-    implementation(Libraries.ComposeToolingPreview)
-    implementation(Libraries.ComposeMaterial)
     implementation(platform(Libraries.KotlinBom))
     implementation(platform(Libraries.ComposeBom))
     implementation(Libraries.Lifecycle)
@@ -66,6 +64,7 @@ dependencies {
     testImplementation(TestLibraries.Junit)
 
     implementation(Libraries.Hilt)
+    implementation(Libraries.HiltNavigation)
     kapt(Libraries.HiltCompiler)
 }
 

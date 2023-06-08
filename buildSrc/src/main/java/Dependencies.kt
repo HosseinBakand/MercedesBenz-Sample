@@ -7,12 +7,14 @@ object Versions {
     const val activity = "1.5.1"
     const val core = "1.10.1"
     const val compose = "1.2.1"
+    const val composeMaterial3 = "1.1.0"
     const val composeBom = "2022.10.00"
     const val coroutines = "1.6.4"
     const val hilt = "2.46.1"
     const val hiltWork = "1.0.0"
     const val hiltNavigation = "1.0.0"
     const val lifecycle = "2.6.1"
+    const val androidxNavigation = "2.5.3"
 
     // TestLibraries
     const val junit = "4.13.2"
@@ -36,6 +38,10 @@ object Libraries {
     const val ComposeUiGraphic = "androidx.compose.ui:ui-graphics"
     const val ComposeToolingPreview = "androidx.compose.ui:ui-tooling-preview"
     const val ComposeMaterial = "androidx.compose.material3:material3"
+    const val  AndroidxComposeMaterial3 = "androidx.compose.material3:material3:${Versions.composeMaterial3}"
+    const val AndroidxComposeMaterial3WindowSizeClass = "androidx.compose.material3:material3-window-size-class:${Versions.composeMaterial3}"
+
+    const val ComposeNavigation = "androidx.navigation:navigation-compose:${Versions.androidxNavigation}"
     const val CoreKtx = "androidx.core:core-ktx:${Versions.core}"
     const val CoroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
     const val CoroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
@@ -43,6 +49,7 @@ object Libraries {
     const val KotlinBom = "org.jetbrains.kotlin:kotlin-bom:${Versions.kotlinSdk}"
     const val Hilt = "com.google.dagger:hilt-android:${Versions.hilt}"
     const val HiltCompiler = "com.google.dagger:hilt-android-compiler:${Versions.hilt}"
+    const val HiltNavigation = "androidx.hilt:hilt-navigation-compose:${Versions.hiltNavigation}"
 
 }
 

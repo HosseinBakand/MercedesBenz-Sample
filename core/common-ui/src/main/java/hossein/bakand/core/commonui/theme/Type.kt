@@ -1,4 +1,4 @@
-package hossein.bakand.mercedesbenz_task.ui.theme
+package hossein.bakand.core.commonui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
