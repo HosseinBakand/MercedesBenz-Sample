@@ -51,8 +51,6 @@ fun MarketScreen(
     uiState: MarketUiState,
     onMarketClick: (String) -> Unit
 ) {
-    val context = LocalContext.current
-
     Scaffold(
         modifier = Modifier.navigationBarsPadding(),
 //        backgroundColor = MaterialTheme.colorScheme.background,

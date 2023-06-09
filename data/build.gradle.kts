@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":domain"))
 
     implementation(Libraries.Retrofit)
+    implementation(Libraries.RetrofitKotlinSerialization)
     implementation(Libraries.OkhttpLogging)
     implementation(Libraries.RoomKtx)
     implementation(Libraries.RoomRuntime)

@@ -20,6 +20,7 @@ object Versions {
     const val room = "2.5.0"
     const val serialization = "1.5.0"
     const val okhttp = "4.10.0"
+    const val retrofitKotlinxSerializationJson = "1.0.0"
 
     // TestLibraries
     const val junit = "4.13.2"
@@ -63,6 +64,7 @@ object Libraries {
     const val RoomKtx = "androidx.room:room-ktx:${Versions.room}"
     const val RoomRuntime = "androidx.room:room-runtime:${Versions.room}"
     const val Retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
+    const val RetrofitKotlinSerialization =  "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:${Versions.retrofitKotlinxSerializationJson}"
     const val OkhttpLogging =  "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
     const val Serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.serialization}"
 }
