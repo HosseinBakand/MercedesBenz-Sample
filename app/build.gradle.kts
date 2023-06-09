@@ -55,7 +55,9 @@ android {
 dependencies {
 
     implementation(project(":core:common-ui"))
+    implementation(project(":core:common"))
     implementation(project(":ui:carlist"))
+
     implementation(Libraries.CoreKtx)
     implementation(platform(Libraries.KotlinBom))
     implementation(platform(Libraries.ComposeBom))

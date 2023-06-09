@@ -17,6 +17,9 @@ android {
 }
 
 dependencies {
+
+    api(Libraries.HiltNavigation)
+
     api(Libraries.ComposeActivity)
     api(Libraries.ComposeUi)
     api(Libraries.ComposeUiGraphic)
