@@ -15,6 +15,10 @@ object Versions {
     const val hiltNavigation = "1.0.0"
     const val lifecycle = "2.6.1"
     const val androidxNavigation = "2.5.3"
+    const val retrofit = "2.9.0"
+    const val room = "2.5.0"
+    const val serialization = "1.5.0"
+    const val okhttp = "4.10.0"
 
     // TestLibraries
     const val junit = "4.13.2"
@@ -47,10 +51,16 @@ object Libraries {
     const val CoroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     const val Lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
     const val KotlinBom = "org.jetbrains.kotlin:kotlin-bom:${Versions.kotlinSdk}"
+
     const val Hilt = "com.google.dagger:hilt-android:${Versions.hilt}"
     const val HiltCompiler = "com.google.dagger:hilt-android-compiler:${Versions.hilt}"
     const val HiltNavigation = "androidx.hilt:hilt-navigation-compose:${Versions.hiltNavigation}"
-
+    const val RoomCompiler = "androidx.room:room-compiler:${Versions.room}"
+    const val RoomKtx = "androidx.room:room-ktx:${Versions.room}"
+    const val RoomRuntime = "androidx.room:room-runtime:${Versions.room}"
+    const val Retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
+    const val OkhttpLogging =  "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
+    const val Serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.serialization}"
 }
 
 object TestLibraries {

@@ -9,4 +9,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:common"))
+
+//    implementation(Libraries.Hilt)
 }
