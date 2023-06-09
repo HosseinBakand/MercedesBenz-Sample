@@ -3,7 +3,6 @@ package hossein.bakand.data.api.model
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -50,7 +49,8 @@ data class Links (
     val classes: String,
     val bodies: String,
     val models: String,
-    val productgroups: String
+    @SerialName("productgroups")
+    val productGroups: String
 )
 
 object KernelTypeSerializer : KSerializer<KernelType> {

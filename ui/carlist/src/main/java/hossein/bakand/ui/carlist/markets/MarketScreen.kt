@@ -132,9 +132,12 @@ private fun ContentDivider() {
 @Composable
 fun MarketItem(market: Market, onClick: (String) -> Unit) {
     Text(
-        modifier = Modifier.clickable {
-            onClick(market.marketId)
-        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick(market.marketId)
+            }
+            .padding(8.dp),
         text = market.marketId
     )
 }

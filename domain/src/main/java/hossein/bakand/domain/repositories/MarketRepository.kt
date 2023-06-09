@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface MarketRepository {
     fun getAllMarket(): Flow<List<Market>>
+    suspend fun updateMarkets()
 }

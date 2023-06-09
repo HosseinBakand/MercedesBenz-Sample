@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +26,12 @@ class MarketViewModel @Inject constructor(
                 SharingStarted.WhileSubscribed(5_000),
                 MarketUiState()
             )
+
+    init {
+        viewModelScope.launch {
+            marketRepository.updateMarkets()
+        }
+    }
 }
 
 data class MarketUiState(
