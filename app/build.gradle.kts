@@ -56,6 +56,8 @@ dependencies {
 
     implementation(project(":core:common-ui"))
     implementation(project(":core:common"))
+    implementation(project(":domain"))
+    implementation(project(":data"))
     implementation(project(":ui:carlist"))
 
     implementation(Libraries.CoreKtx)

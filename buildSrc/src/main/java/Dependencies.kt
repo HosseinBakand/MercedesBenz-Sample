@@ -5,6 +5,7 @@ object Versions {
 
     //libraries
     const val activity = "1.5.1"
+    const val androidxLifecycle = "2.6.0-alpha05"
     const val core = "1.10.1"
     const val compose = "1.2.1"
     const val composeMaterial3 = "1.1.0"
@@ -42,8 +43,11 @@ object Libraries {
     const val ComposeUiGraphic = "androidx.compose.ui:ui-graphics"
     const val ComposeToolingPreview = "androidx.compose.ui:ui-tooling-preview"
     const val ComposeMaterial = "androidx.compose.material3:material3"
-    const val  AndroidxComposeMaterial3 = "androidx.compose.material3:material3:${Versions.composeMaterial3}"
+    const val AndroidxComposeMaterial3 = "androidx.compose.material3:material3:${Versions.composeMaterial3}"
     const val AndroidxComposeMaterial3WindowSizeClass = "androidx.compose.material3:material3-window-size-class:${Versions.composeMaterial3}"
+    const val AndroidxLifecycleLivedataKtx =  "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidxLifecycle}"
+    const val AndroidxLifecycleRuntimeCompose =  "androidx.lifecycle:lifecycle-runtime-compose:${Versions.androidxLifecycle}"
+    const val AndroidxLifecycleViewModelCompose =  "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.androidxLifecycle}"
 
     const val ComposeNavigation = "androidx.navigation:navigation-compose:${Versions.androidxNavigation}"
     const val CoreKtx = "androidx.core:core-ktx:${Versions.core}"

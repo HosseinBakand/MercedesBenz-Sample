@@ -12,6 +12,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -19,25 +20,38 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = nero,
+    secondary = gray36,
+    tertiary = Color.Black,
+    background = Color.White,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-background = Color(0xFFFFFBFE),
-surface = Color(0xFFFFFBFE),
-onPrimary = Color.White,
-onSecondary = Color.White,
-onTertiary = Color.White,
-onBackground = Color(0xFF1C1B1F),
-onSurface = Color(0xFF1C1B1F),
-*/
+    primary = nero,
+    secondary = gray36,
+    tertiary = Color.Black,
+    background = Color.White,
+    surface = Color.White,
+    onPrimary = Color.White,
+//    primaryContainer = Purple90,
+//    onPrimaryContainer = Purple10,
+//    onSecondary = Color.White,
+//    secondaryContainer = Orange90,
+//    onSecondaryContainer = Orange10,
+//    onTertiary = Color.White,
+//    tertiaryContainer = Blue90,
+//    onTertiaryContainer = Blue10,
+//    error = Red40,
+//    onError = Color.White,
+//    errorContainer = Red90,
+//    onErrorContainer = Red10,
+//    onBackground = DarkPurpleGray10,
+//    onSurface = DarkPurpleGray10,
+//    surfaceVariant = PurpleGray90,
+//    onSurfaceVariant = PurpleGray30,
+//    inverseSurface = DarkPurpleGray20,
+//    inverseOnSurface = DarkPurpleGray95,
+//    outline = PurpleGray50,
 )
 
 @Composable
@@ -54,13 +68,10 @@ fun MercedesBenzTheme(
     )
 
     CompositionLocalProvider(
-        LocalBackgroundTheme provides backgroundTheme,
-        LocalAbsoluteTonalElevation provides 0.dp
+        LocalBackgroundTheme provides backgroundTheme, LocalAbsoluteTonalElevation provides 0.dp
     ) {
         MaterialTheme(
-            colorScheme = colorScheme,
-            typography = Typography,
-            content = content
+            colorScheme = colorScheme, typography = Typography, content = content
         )
     }
 }

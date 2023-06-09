@@ -3,17 +3,17 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id ("org.jetbrains.kotlin.plugin.serialization")
-//    id("kotlin")
-//    id("kotlinx-serialization")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
-    namespace = "hossein.bakand.core.designsystem"
+    namespace = "hossein.bakand.data"
 
 }
 
 dependencies {
     implementation(project(":core:common"))
+    implementation(project(":core:model"))
     implementation(project(":domain"))
 
     implementation(Libraries.Retrofit)
@@ -21,6 +21,8 @@ dependencies {
     implementation(Libraries.RoomKtx)
     implementation(Libraries.RoomRuntime)
     implementation(Libraries.Serialization)
-
     kapt(Libraries.RoomCompiler)
+
+    implementation(Libraries.Hilt)
+    kapt(Libraries.HiltCompiler)
 }
