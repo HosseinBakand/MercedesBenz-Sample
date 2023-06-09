@@ -1,6 +1,7 @@
 package hossein.bakand.ui.carlist.markets
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,18 +35,21 @@ import hossein.bakand.data.model.marketPreview
 
 @Composable
 fun MarketScreen(
-    viewModel: MarketViewModel = hiltViewModel()
+    viewModel: MarketViewModel = hiltViewModel(),
+    onMarketClick: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     MarketScreen(
         uiState = uiState,
+        onMarketClick = onMarketClick
     )
 }
 
 @Composable
 fun MarketScreen(
     uiState: MarketUiState,
+    onMarketClick: (String) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -76,7 +80,7 @@ fun MarketScreen(
                     )
 
 
-                    MarketItem(market)
+                    MarketItem(market, onMarketClick)
 
 
                     if (index < uiState.markets.size) {
@@ -128,8 +132,13 @@ private fun ContentDivider() {
 }
 
 @Composable
-fun MarketItem(market: Market) {
-    Text(text = market.marketId)
+fun MarketItem(market: Market, onClick: (String) -> Unit) {
+    Text(
+        modifier = Modifier.clickable {
+            onClick(market.marketId)
+        },
+        text = market.marketId
+    )
 }
 
 
@@ -137,5 +146,7 @@ fun MarketItem(market: Market) {
 @Composable
 fun MarketScreenPreview() {
 
-    MarketScreen(uiState = MarketUiState(markets = marketPreview))
+    MarketScreen(uiState = MarketUiState(markets = marketPreview)) {
+
+    }
 }

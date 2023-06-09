@@ -19,6 +19,6 @@ fun MercedesBenzNavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        carListGraph()
+        carListGraph(navController = navController)
     }
 }
