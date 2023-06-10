@@ -1,5 +1,8 @@
 package hossein.bakand.data.api.model
 
+import hossein.bakand.data.database.models.PriceDataModel
+import hossein.bakand.data.database.models.VehicleBodyDataModel
+import hossein.bakand.data.database.models.VehicleClassDataModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -15,11 +18,11 @@ data class NetworkCarModel (
     val name: String,
     val shortName: String,
     val brand: Brand,
-    val vehicleClass: VehicleClass,
-    val vehicleBody: VehicleBody,
+    val vehicleClass: VehicleClassDataModel,
+    val vehicleBody: VehicleBodyDataModel,
     val modelYear: String,
     val changeYear: String? = null,
-    val priceInformation: Price,
+    val priceInformation: PriceDataModel,
 )
 @Serializable
 data class Brand (
@@ -34,22 +37,4 @@ data class Context (
 data class Market (
      @SerialName("marketId")
     val marketID: String,
-)
-@Serializable
-data class Price (
-    val price: Double,
-    val currency: String,
-)
-@Serializable
-data class VehicleBody (
-     @SerialName("bodyId")
-    val bodyID: String,
-    val bodyName: String,
-
-)
-@Serializable
-data class VehicleClass (
-     @SerialName("classId")
-    val classID: String,
-    val className: String,
 )

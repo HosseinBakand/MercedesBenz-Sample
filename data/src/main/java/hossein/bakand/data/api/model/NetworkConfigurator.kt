@@ -1,5 +1,6 @@
 package hossein.bakand.data.api.model
 
+import hossein.bakand.data.database.models.PriceDataModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -19,9 +20,9 @@ data class NetworkConfigurator (
 
     val internalModelSeries: String,
     val context: Context,
-    val initialPrice: Price,
-    val configurationPrice: Price,
-    val deltaExtraEquipmentPrice: Price,
+    val initialPrice: PriceDataModel,
+    val configurationPrice: PriceDataModel,
+    val deltaExtraEquipmentPrice: PriceDataModel,
     val modelYear: String,
     val changeYear: String? = null,
     val technicalInformation: TechnicalInformation,

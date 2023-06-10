@@ -5,9 +5,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.navDeepLink
 import hossein.bakand.core.commonui.navigation.MercedesBenzNavigationDestination
-import hossein.bakand.ui.carlist.CarListScreen
+import hossein.bakand.ui.carlist.models.CarListScreen
 import hossein.bakand.ui.carlist.markets.MarketScreen
 
 object CarListDestination : MercedesBenzNavigationDestination {
@@ -30,7 +29,9 @@ fun NavGraphBuilder.carListGraph(navController: NavController) {
             navArgument(CarListDestination.marketIdArg) { type = NavType.StringType }
         )
     ) {
-        CarListScreen()
+        CarListScreen(){
+
+        }
     }
     composable(route = MarketDestination.route) {
         MarketScreen(
