@@ -14,14 +14,6 @@ interface MercedesBenzNiaNetworkApi {
     suspend fun getMarket(
         @Path(value = "market_id") marketId:String
     ): NetworkMarket
-//    @GET(value = "markets/{market_id}/classes")
-//    suspend fun getMarketClasses(
-//        @Path(value = "market_id") marketId:String
-//    ): NetworkMarket
-//    @GET(value = "markets/{market_id}/bodies")
-//    suspend fun getMarketBodies(
-//        @Path(value = "market_id") marketId:String
-//    ): NetworkMarket
     @GET(value = "markets/{market_id}/models")
     suspend fun getMarketModels(
         @Path(value = "market_id") marketId:String

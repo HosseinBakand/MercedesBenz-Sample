@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import hossein.bakand.data.database.entities.CarModelEntity
 import hossein.bakand.data.database.entities.MarketEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -14,4 +15,10 @@ interface MarketDao {
 
     @Query("SELECT * FROM markets")
     fun getMarkets(): Flow<List<MarketEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCarModels(marketEntities: List<CarModelEntity>)
+
+    @Query("SELECT * FROM car_models WHERE market_id = :marketId")
+    fun getMarketCarModels(marketId:String): Flow<List<CarModelEntity>>
 }
