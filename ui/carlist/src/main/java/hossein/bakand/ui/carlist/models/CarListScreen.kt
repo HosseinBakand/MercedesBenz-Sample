@@ -6,15 +6,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -39,44 +44,67 @@ import hossein.bakand.core.commonui.R
 import hossein.bakand.core.commonui.theme.MercedesBenzTheme
 import hossein.bakand.data.model.CarModel
 import hossein.bakand.data.model.carModelPreview
-import hossein.bakand.ui.carlist.markets.MarketViewModel
 
 @Composable
 fun CarListScreen(
     viewModel: CarListViewModel = hiltViewModel(), onCarClick: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    CarListScreen(uiState)
+    CarListScreen(uiState, viewModel::setSelectedClass){
+
+    }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CarListScreen(uiState: CarListUiState) {
-    Scaffold(modifier = Modifier.navigationBarsPadding(), topBar = {
-        BCTopAppBar(title = "Models")
-    }) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            var selectedTabIndex by remember { mutableStateOf(0) }
-            val titles = listOf("A-Class", "C-Class", "S-Class")
+fun CarListScreen(
+    uiState: CarListUiState,
+    onSelectClass: (Int) -> Unit,
+    onFilterClick: ()->Unit
+) {
+    Scaffold(
+        modifier = Modifier.navigationBarsPadding(),
+        topBar = {
+            BCTopAppBar(title = "Models")
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        color = MaterialTheme.colorScheme.secondary,
-                        shape = MaterialTheme.shapes.medium
-                    )
+
             ) {
-                Text(modifier = Modifier.weight(1f), text = "Search")
-                Text(text = "Filter")
-            }
-            MBTabRow(selectedTabIndex = selectedTabIndex) {
-                titles.forEachIndexed { index, title ->
-                    MBTab(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        text = { Text(text = title) },
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(
+                            color = MaterialTheme.colorScheme.secondary,
+                            shape = MaterialTheme.shapes.medium
+                        ), text = "Search"
+                )
+                Button(onClick = onFilterClick) {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = "Filter"
                     )
+                }
+            }
+
+            val classes = uiState.carClasses
+            if (classes.size > 1) {
+                MBTabRow(selectedTabIndex = uiState.selectedClassInx) {
+                    classes.forEachIndexed { index, carClass ->
+                        MBTab(
+                            selected = uiState.selectedClassInx == index,
+                            onClick = { onSelectClass(index) },
+                            text = { Text(text = carClass.className) },
+                        )
+                    }
                 }
             }
 //            BrandsComponent(brands = emptyList())
@@ -135,9 +163,9 @@ fun MBTab(
     text: @Composable () -> Unit,
 ) {
     Tab(
+        modifier = modifier,
         selected = selected,
         onClick = onClick,
-        modifier = modifier,
         enabled = enabled,
         text = {
             val style = MaterialTheme.typography.labelLarge.copy(textAlign = TextAlign.Center)
@@ -159,7 +187,7 @@ fun MBTabRow(
     modifier: Modifier = Modifier,
     tabs: @Composable () -> Unit,
 ) {
-    TabRow(
+    ScrollableTabRow(
         selectedTabIndex = selectedTabIndex,
         modifier = modifier,
         containerColor = Color.Transparent,
