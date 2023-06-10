@@ -40,17 +40,6 @@ data class Price (
     val price: Double,
     val currency: String,
 )
-//@Serializable
-//enum class Currency(val value: String) {
-//    Eur("EUR");
-//
-//    companion object {
-//        public fun fromValue(value: String): Currency = when (value) {
-//            "EUR" -> Eur
-//            else  -> throw IllegalArgumentException()
-//        }
-//    }
-//}
 @Serializable
 data class VehicleBody (
      @SerialName("bodyId")
