@@ -149,3 +149,4 @@ local.properties
 /buildSrc/build/kotlin/compileKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i.len
 /buildSrc/build/classes/kotlin/main/TestLibraries.class
 /buildSrc/build/classes/kotlin/main/Versions.class
+/buildSrc/hs_err_pid13000.log

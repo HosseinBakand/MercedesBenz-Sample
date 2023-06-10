@@ -5,6 +5,7 @@ object Versions {
 
     //libraries
     const val activity = "1.5.1"
+    const val androidxLifecycle = "2.6.0-alpha05"
     const val core = "1.10.1"
     const val compose = "1.2.1"
     const val composeMaterial3 = "1.1.0"
@@ -19,6 +20,7 @@ object Versions {
     const val room = "2.5.0"
     const val serialization = "1.5.0"
     const val okhttp = "4.10.0"
+    const val retrofitKotlinxSerializationJson = "1.0.0"
 
     // TestLibraries
     const val junit = "4.13.2"
@@ -42,8 +44,11 @@ object Libraries {
     const val ComposeUiGraphic = "androidx.compose.ui:ui-graphics"
     const val ComposeToolingPreview = "androidx.compose.ui:ui-tooling-preview"
     const val ComposeMaterial = "androidx.compose.material3:material3"
-    const val  AndroidxComposeMaterial3 = "androidx.compose.material3:material3:${Versions.composeMaterial3}"
+    const val AndroidxComposeMaterial3 = "androidx.compose.material3:material3:${Versions.composeMaterial3}"
     const val AndroidxComposeMaterial3WindowSizeClass = "androidx.compose.material3:material3-window-size-class:${Versions.composeMaterial3}"
+    const val AndroidxLifecycleLivedataKtx =  "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidxLifecycle}"
+    const val AndroidxLifecycleRuntimeCompose =  "androidx.lifecycle:lifecycle-runtime-compose:${Versions.androidxLifecycle}"
+    const val AndroidxLifecycleViewModelCompose =  "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.androidxLifecycle}"
 
     const val ComposeNavigation = "androidx.navigation:navigation-compose:${Versions.androidxNavigation}"
     const val CoreKtx = "androidx.core:core-ktx:${Versions.core}"
@@ -59,6 +64,7 @@ object Libraries {
     const val RoomKtx = "androidx.room:room-ktx:${Versions.room}"
     const val RoomRuntime = "androidx.room:room-runtime:${Versions.room}"
     const val Retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
+    const val RetrofitKotlinSerialization =  "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:${Versions.retrofitKotlinxSerializationJson}"
     const val OkhttpLogging =  "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
     const val Serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.serialization}"
 }

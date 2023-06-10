@@ -1,16 +1,42 @@
 package hossein.bakand.ui.carlist.navigtion
 
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import hossein.bakand.core.commonui.navigation.MercedesBenzNavigationDestination
 import hossein.bakand.ui.carlist.CarListScreen
+import hossein.bakand.ui.carlist.markets.MarketScreen
 
 object CarListDestination : MercedesBenzNavigationDestination {
-    override val route: String = "car-list"
+    const val marketIdArg = "chapterId"
+
+    override val route: String = "car-list/{$marketIdArg}"
+
+    fun createNavigationRoute(marketIdArg: String): String {
+        return "car-list/$marketIdArg"
+    }
 }
 
-fun NavGraphBuilder.carListGraph() {
-    composable(route = CarListDestination.route) {
+object MarketDestination : MercedesBenzNavigationDestination {
+    override val route: String = "market"
+}
+
+fun NavGraphBuilder.carListGraph(navController: NavController) {
+    composable(route = CarListDestination.route,
+        arguments = listOf(
+            navArgument(CarListDestination.marketIdArg) { type = NavType.StringType }
+        )
+    ) {
         CarListScreen()
+    }
+    composable(route = MarketDestination.route) {
+        MarketScreen(
+            onMarketClick = {
+                navController.navigate(CarListDestination.createNavigationRoute(it))
+            }
+        )
     }
 }
