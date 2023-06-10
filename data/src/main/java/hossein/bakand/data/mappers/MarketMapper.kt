@@ -14,7 +14,7 @@ fun NetworkMarket.toEntity() = MarketEntity(
 )
 fun MarketEntity.toModel() = Market(
     marketId = marketId,
-    language = Language.valueOf(language),
-    country = Country.valueOf(country),
+    language = Language.fromCode(language),
+    country = Country.fromCode(country),
     kernelType = kernelType,
 )

@@ -249,4 +249,15 @@ enum class Country(val code:String,val title : String) {
     YE("ye","Yemen"),
     ZM("zm","Zambia"),
     ZW("zw","Zimbabwe"),
+    UnKnown("unKnown", "UnKnown ");
+
+    companion object{
+        fun fromCode(code: String):Country{
+            return try {
+                Country.valueOf(code.uppercase())
+            }catch(e:IllegalArgumentException) {
+                UnKnown
+            }
+        }
+    }
 }

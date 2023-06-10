@@ -184,9 +184,16 @@ enum class Language(val code: String, val title: String) {
     YO("yo", "Yoruba"),
     ZA("za", "Zhuang; Chuang"),
     ZH("zh", "Chinese"),
-    ZU("zu", "Zulu");
+    ZU("zu", "Zulu"),
+    UnKnown("unKnown", "UnKnown");
 
-    fun fromCode(code: String):Language{
-        return Language.valueOf(code)
+    companion object {
+        fun fromCode(code: String): Language {
+            return try {
+                Language.valueOf(code.uppercase())
+            } catch (e: IllegalArgumentException) {
+                UnKnown
+            }
+        }
     }
 }

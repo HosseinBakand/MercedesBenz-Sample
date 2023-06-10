@@ -33,31 +33,12 @@ private val LightColorScheme = lightColorScheme(
     background = Color.White,
     surface = Color.White,
     onPrimary = Color.White,
-//    primaryContainer = Purple90,
-//    onPrimaryContainer = Purple10,
-//    onSecondary = Color.White,
-//    secondaryContainer = Orange90,
-//    onSecondaryContainer = Orange10,
-//    onTertiary = Color.White,
-//    tertiaryContainer = Blue90,
-//    onTertiaryContainer = Blue10,
-//    error = Red40,
-//    onError = Color.White,
-//    errorContainer = Red90,
-//    onErrorContainer = Red10,
-//    onBackground = DarkPurpleGray10,
-//    onSurface = DarkPurpleGray10,
-//    surfaceVariant = PurpleGray90,
-//    onSurfaceVariant = PurpleGray30,
-//    inverseSurface = DarkPurpleGray20,
-//    inverseOnSurface = DarkPurpleGray95,
-//    outline = PurpleGray50,
 )
 
 @Composable
 fun MercedesBenzTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = getColorScheme(darkTheme = darkTheme, dynamicColor = dynamicColor)
@@ -68,7 +49,8 @@ fun MercedesBenzTheme(
     )
 
     CompositionLocalProvider(
-        LocalBackgroundTheme provides backgroundTheme, LocalAbsoluteTonalElevation provides 0.dp
+        LocalBackgroundTheme provides backgroundTheme,
+        LocalAbsoluteTonalElevation provides 0.dp
     ) {
         MaterialTheme(
             colorScheme = colorScheme, typography = Typography, content = content
@@ -79,12 +61,13 @@ fun MercedesBenzTheme(
 @Composable
 fun getColorScheme(
     darkTheme: Boolean,
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
 ) = when {
     // Dynamic color is available on Android 12+
     dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
         val context = LocalContext.current
-        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        if (darkTheme) dynamicDarkColorScheme(context)
+        else dynamicLightColorScheme(context)
     }
 
     darkTheme -> DarkColorScheme
