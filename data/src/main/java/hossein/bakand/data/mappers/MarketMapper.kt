@@ -1,5 +1,6 @@
 package hossein.bakand.data.mappers
 
+import hossein.bakand.data.api.model.Links
 import hossein.bakand.data.api.model.NetworkMarket
 import hossein.bakand.data.database.entities.MarketEntity
 import hossein.bakand.data.model.Market
@@ -9,7 +10,7 @@ fun NetworkMarket.toEntity() = MarketEntity(
     language = language,
     country = country,
 //    kernelType = kernelType,
-    links = links,
+    links = Links("","","","",""),
 )
 fun MarketEntity.toModel() = Market(
     marketId = marketId,

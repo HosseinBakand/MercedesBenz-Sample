@@ -18,6 +18,8 @@ class RetrofitMercedesBenzNetwork @Inject constructor(
 ) : MercedesBenzNetworkDataSource {
 
     override suspend fun getMarkets(): List<NetworkMarket> {
+//        networkApi.getMarketModels("en_AM")
+        networkApi.getMarketProductGroups("de_DE","1771511")
         return networkApi.getMarkets()//.data
     }
 

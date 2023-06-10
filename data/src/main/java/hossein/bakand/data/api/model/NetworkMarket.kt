@@ -19,8 +19,8 @@ data class NetworkMarket (
     val vbet: String? = null,
     val kernelType: List<KernelType>,
 
-    @SerialName( "_links")
-    val links: Links,
+//    @SerialName( "_links")
+//    val links: Links,
 
     @SerialName("gssnId")
     val gssnID: String? = null,
