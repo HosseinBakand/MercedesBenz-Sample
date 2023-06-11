@@ -8,6 +8,7 @@ import hossein.bakand.domain.repositories.MarketRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -20,6 +21,7 @@ class MarketViewModel @Inject constructor(
 
     val uiState: StateFlow<MarketUiState> =
         marketRepository.getAllMarket()
+            .catch { emit(emptyList()) }
             .map { MarketUiState(markets = it) }
             .stateIn(
                 viewModelScope,

@@ -16,6 +16,7 @@ import hossein.bakand.ui.carlist.navigtion.CarListDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -40,7 +41,8 @@ class CarListViewModel @Inject constructor(
 
     val uiState: StateFlow<CarListUiState> =
         combine(
-            marketRepository.getMarketModels(marketId),
+            marketRepository.getMarketModels(marketId)
+                .catch { emit(emptyList()) },
             _selectedClassState,
             filterState
         ) { carModels, selectedIndex, filters ->
@@ -104,9 +106,9 @@ class CarListViewModel @Inject constructor(
     }
 
     fun changeBodyFilter(body: String) {
-        _filterState.update {state->
+        _filterState.update { state ->
             val pair = state.bodies.find { it.first.bodyName == body }!!
-            val newSelectedBodies:Set<Pair<VehicleBody,Boolean>> =
+            val newSelectedBodies: Set<Pair<VehicleBody, Boolean>> =
                 state.bodies
                     .minus(pair)
                     .plus(pair.copy(second = !pair.second))
