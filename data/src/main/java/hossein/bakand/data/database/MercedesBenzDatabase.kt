@@ -3,6 +3,7 @@
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import hossein.bakand.data.database.daos.CarModelDao
 import hossein.bakand.data.database.daos.MarketDao
 import hossein.bakand.data.database.entities.CarModelEntity
 import hossein.bakand.data.database.entities.MarketEntity
@@ -26,4 +27,5 @@ import hossein.bakand.data.database.utils.VehicleClassDataModelConverter
 )
 abstract class MercedesBenzDatabase : RoomDatabase() {
     abstract fun marketDao(): MarketDao
+    abstract fun carModelDao(): CarModelDao
 }

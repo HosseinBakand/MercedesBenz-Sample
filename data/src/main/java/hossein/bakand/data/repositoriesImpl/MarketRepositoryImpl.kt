@@ -3,15 +3,13 @@ package hossein.bakand.data.repositoriesImpl
 import hossein.bakand.data.api.MercedesBenzNetworkDataSource
 import hossein.bakand.data.api.model.NetworkMarket
 import hossein.bakand.data.database.daos.MarketDao
-import hossein.bakand.data.database.entities.CarModelEntity
 import hossein.bakand.data.mappers.toEntity
 import hossein.bakand.data.mappers.toModel
 import hossein.bakand.data.model.CarModel
 import hossein.bakand.data.model.Market
-import hossein.bakand.data.model.carModelPreview
+import hossein.bakand.data.util.networkRequest
 import hossein.bakand.domain.repositories.MarketRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -24,16 +22,18 @@ class MarketRepositoryImpl @Inject constructor(
     }
 
     override fun getMarketModels(marketId: String): Flow<List<CarModel>> {
-        return marketDao.getMarketCarModels(marketId).map { markets -> markets.map { it.toModel() } }
+        return marketDao.getMarketCarModels(marketId)
+            .map { markets -> markets.map { it.toModel() } }
     }
 
-    override suspend fun updateMarkets() {
+    override suspend fun updateMarkets(): Boolean = networkRequest {
         val markets = mercedesBenzNetworkDataSource.getMarkets().map(NetworkMarket::toEntity)
         marketDao.insertMarkets(markets)
     }
 
-    override suspend fun updateMarketCarModels(marketId: String) {
-        val markets = mercedesBenzNetworkDataSource.getMarketModels(marketId = marketId).map { it.toEntity() }
+    override suspend fun fetchMarketCarModels(marketId: String) = networkRequest {
+        val markets =
+            mercedesBenzNetworkDataSource.getMarketModels(marketId = marketId).map { it.toEntity() }
         marketDao.insertCarModels(markets)
     }
 }

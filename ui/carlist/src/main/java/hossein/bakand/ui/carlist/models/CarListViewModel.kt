@@ -7,19 +7,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hossein.bakand.data.model.CarModel
-import hossein.bakand.data.model.Market
 import hossein.bakand.data.model.VehicleBody
 import hossein.bakand.data.model.VehicleClass
 import hossein.bakand.domain.repositories.MarketRepository
-import hossein.bakand.ui.carlist.markets.MarketUiState
+import hossein.bakand.domain.usecases.FetchMarketCarModelsUseCase
+import hossein.bakand.domain.usecases.GetMarketCarModelsUseCase
+import hossein.bakand.domain.usecases.ToggleBookmarkCarUseCase
 import hossein.bakand.ui.carlist.navigtion.CarListDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -29,7 +31,9 @@ import javax.inject.Inject
 @HiltViewModel
 class CarListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val marketRepository: MarketRepository
+    private val getMarketCarModelsUseCase: GetMarketCarModelsUseCase,
+    private val fetchMarketCarModelsUseCase: FetchMarketCarModelsUseCase,
+    private val toggleBookmarkCarUseCase: ToggleBookmarkCarUseCase,
 ) : ViewModel() {
     private val marketId: String = savedStateHandle[CarListDestination.marketIdArg] ?: ""
 
@@ -38,9 +42,12 @@ class CarListViewModel @Inject constructor(
     private val _filterState = MutableStateFlow(FilterState())
     val filterState: StateFlow<FilterState> = _filterState
 
+    private val marketCarModels = getMarketCarModelsUseCase.flow
+        .onStart { getMarketCarModelsUseCase.invoke(marketId) }
+        .catch { emit(emptyList()) }
     val uiState: StateFlow<CarListUiState> =
         combine(
-            marketRepository.getMarketModels(marketId),
+            marketCarModels,
             _selectedClassState,
             filterState
         ) { carModels, selectedIndex, filters ->
@@ -52,7 +59,7 @@ class CarListViewModel @Inject constructor(
                             filters.bodies.find { it.first == car.vehicleBody }?.second == true &&
                             car.priceInformation.price.toFloat() in filters.selectedPriceRange
                 }
-
+            Log.e("TAGTAG", selectedClassCars.map { it.isBookmarked }.toString())
             CarListUiState(
                 carModels = selectedClassCars,
                 carClasses = classes,
@@ -67,9 +74,9 @@ class CarListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            marketRepository.updateMarketCarModels(marketId)
+            fetchMarketCarModelsUseCase(marketId)
         }
-        marketRepository.getMarketModels(marketId).onEach { cars ->
+        marketCarModels.onEach { cars ->
             val minPrice: Float =
                 cars.map { it.priceInformation.price }.minOrNull()?.toFloat() ?: 0f
             val maxPrice: Float =
@@ -104,9 +111,9 @@ class CarListViewModel @Inject constructor(
     }
 
     fun changeBodyFilter(body: String) {
-        _filterState.update {state->
+        _filterState.update { state ->
             val pair = state.bodies.find { it.first.bodyName == body }!!
-            val newSelectedBodies:Set<Pair<VehicleBody,Boolean>> =
+            val newSelectedBodies: Set<Pair<VehicleBody, Boolean>> =
                 state.bodies
                     .minus(pair)
                     .plus(pair.copy(second = !pair.second))
@@ -121,6 +128,12 @@ class CarListViewModel @Inject constructor(
             it.copy(
                 selectedPriceRange = priceRange
             )
+        }
+    }
+
+    fun bookmarkCar(carModel: CarModel) {
+        viewModelScope.launch {
+            toggleBookmarkCarUseCase(carModel)
         }
     }
 }

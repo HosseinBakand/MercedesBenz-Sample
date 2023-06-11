@@ -59,6 +59,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
     implementation(project(":ui:carlist"))
+    implementation(project(":workManager"))
 
     implementation(Libraries.CoreKtx)
     implementation(platform(Libraries.KotlinBom))
