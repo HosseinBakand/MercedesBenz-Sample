@@ -2,10 +2,7 @@ package hossein.bakand.data.mappers
 
 import hossein.bakand.data.api.model.NetworkCarModel
 import hossein.bakand.data.database.entities.CarModelEntity
-import hossein.bakand.data.database.entities.MarketEntity
 import hossein.bakand.data.model.CarModel
-import hossein.bakand.data.model.Price
-import hossein.bakand.data.model.VehicleBody
 
 fun NetworkCarModel.toEntity() = CarModelEntity(
     vehicleSortID = vehicleSortID,
@@ -35,7 +32,7 @@ fun CarModelEntity.toModel() = CarModel(
     brand = brand,
     vehicleClass = vehicleClass.toModel(),
     vehicleBody = vehicleBody.toModel(),
-    modelYear = modelYear,
+    modelYear = convertModelYear(modelYear),
     changeYear = changeYear,
     priceInformation = priceInformation.toModel(),
     isBookmarked = isBookmarked
@@ -58,3 +55,11 @@ fun CarModel.toEntity(): CarModelEntity = CarModelEntity(
     isBookmarked = isBookmarked
 )
 
+private fun convertModelYear(modelYear: String): String {
+    return try {
+        val modelYear1 = modelYear.toInt()
+        (modelYear1 + 1210).toString()
+    } catch (e: NumberFormatException) {
+        modelYear
+    }
+}
