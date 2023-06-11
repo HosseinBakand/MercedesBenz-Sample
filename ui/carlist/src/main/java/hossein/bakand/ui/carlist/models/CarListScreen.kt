@@ -434,7 +434,6 @@ fun MBTabRow(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @DevicePreviews
 fun CarListPreview() {
