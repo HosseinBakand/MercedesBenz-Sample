@@ -1,17 +1,16 @@
 package hossein.bakand.ui.carlist.models
 
-import android.util.Log
 import android.util.Range
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hossein.bakand.data.model.CarModel
-import hossein.bakand.data.model.Market
 import hossein.bakand.data.model.VehicleBody
 import hossein.bakand.data.model.VehicleClass
 import hossein.bakand.domain.repositories.MarketRepository
-import hossein.bakand.ui.carlist.markets.MarketUiState
+import hossein.bakand.domain.usecases.FetchMarketCarModelsUseCase
+import hossein.bakand.domain.usecases.GetMarketCarModelsUseCase
 import hossein.bakand.ui.carlist.navigtion.CarListDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,8 +18,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -30,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CarListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val marketRepository: MarketRepository
+    private val getMarketCarModelsUseCase: GetMarketCarModelsUseCase,
+    private val fetchMarketCarModelsUseCase: FetchMarketCarModelsUseCase,
 ) : ViewModel() {
     private val marketId: String = savedStateHandle[CarListDestination.marketIdArg] ?: ""
 
@@ -39,10 +39,12 @@ class CarListViewModel @Inject constructor(
     private val _filterState = MutableStateFlow(FilterState())
     val filterState: StateFlow<FilterState> = _filterState
 
+    private val marketCarModels = getMarketCarModelsUseCase.flow
+        .onStart { getMarketCarModelsUseCase.invoke(marketId) }
+        .catch { emit(emptyList()) }
     val uiState: StateFlow<CarListUiState> =
         combine(
-            marketRepository.getMarketModels(marketId)
-                .catch { emit(emptyList()) },
+            marketCarModels,
             _selectedClassState,
             filterState
         ) { carModels, selectedIndex, filters ->
@@ -69,9 +71,9 @@ class CarListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            marketRepository.updateMarketCarModels(marketId)
+            fetchMarketCarModelsUseCase(marketId)
         }
-        marketRepository.getMarketModels(marketId).onEach { cars ->
+        marketCarModels.onEach { cars ->
             val minPrice: Float =
                 cars.map { it.priceInformation.price }.minOrNull()?.toFloat() ?: 0f
             val maxPrice: Float =

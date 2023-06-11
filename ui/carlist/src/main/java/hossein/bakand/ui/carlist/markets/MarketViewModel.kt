@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hossein.bakand.data.model.Market
 import hossein.bakand.domain.repositories.MarketRepository
+import hossein.bakand.domain.usecases.FetchMarketsUseCase
+import hossein.bakand.domain.usecases.ObserveMarketsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,22 +18,28 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MarketViewModel @Inject constructor(
-    marketRepository: MarketRepository
+    observeMarketsUseCase: ObserveMarketsUseCase,
+    private val fetchMarketsUseCase: FetchMarketsUseCase,
 ) : ViewModel() {
 
     val uiState: StateFlow<MarketUiState> =
-        marketRepository.getAllMarket()
+        observeMarketsUseCase()
             .catch { emit(emptyList()) }
-            .map { MarketUiState(markets = it) }
+            .map {
+                if(it.isEmpty()){
+                    fetchData()
+                }
+                MarketUiState(markets = it)
+            }
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5_000),
                 MarketUiState()
             )
 
-    init {
+    private fun fetchData() {
         viewModelScope.launch {
-            marketRepository.updateMarkets()
+            fetchMarketsUseCase(Unit)
         }
     }
 }
