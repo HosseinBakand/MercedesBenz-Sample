@@ -10,7 +10,7 @@ import javax.inject.Inject
 class CarModelRepositoryImpl @Inject constructor(
     private val carModelDao: CarModelDao
 ) : CarModelRepository {
-    override suspend fun toggleBookmarkCar(carModel: CarModel) {
-        carModelDao.insertCarModelBookMark(carModel.copy(isBookmarked = !carModel.isBookmarked).toEntity())
+    override suspend fun insertAndReplaceCarModel(carModel: CarModel) {
+        carModelDao.insertCarModelBookMark(carModel.toEntity())
     }
 }

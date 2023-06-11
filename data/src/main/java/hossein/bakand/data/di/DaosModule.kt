@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import hossein.bakand.data.database.MercedesBenzDatabase
+import hossein.bakand.data.database.daos.CarModelDao
 import hossein.bakand.data.database.daos.MarketDao
 
 
@@ -14,7 +15,11 @@ import hossein.bakand.data.database.daos.MarketDao
 @InstallIn(SingletonComponent::class)
 object DaosModule {
     @Provides
-    fun providesTopicsDao(
+    fun providesMarketDao(
         database: MercedesBenzDatabase,
     ): MarketDao = database.marketDao()
+    @Provides
+    fun providesCarModelDao(
+        database: MercedesBenzDatabase,
+    ): CarModelDao= database.carModelDao()
 }

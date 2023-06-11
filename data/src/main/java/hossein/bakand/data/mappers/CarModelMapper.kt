@@ -21,6 +21,7 @@ fun NetworkCarModel.toEntity() = CarModelEntity(
     modelYear = modelYear,
     changeYear = changeYear,
     priceInformation = priceInformation,
+    isBookmarked = false
 )
 
 fun CarModelEntity.toModel() = CarModel(

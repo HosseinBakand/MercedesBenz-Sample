@@ -1,5 +1,6 @@
 package hossein.bakand.ui.carlist.models
 
+import android.util.Log
 import android.util.Range
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,7 @@ import hossein.bakand.data.model.VehicleClass
 import hossein.bakand.domain.repositories.MarketRepository
 import hossein.bakand.domain.usecases.FetchMarketCarModelsUseCase
 import hossein.bakand.domain.usecases.GetMarketCarModelsUseCase
+import hossein.bakand.domain.usecases.ToggleBookmarkCarUseCase
 import hossein.bakand.ui.carlist.navigtion.CarListDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,6 +33,7 @@ class CarListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getMarketCarModelsUseCase: GetMarketCarModelsUseCase,
     private val fetchMarketCarModelsUseCase: FetchMarketCarModelsUseCase,
+    private val toggleBookmarkCarUseCase: ToggleBookmarkCarUseCase,
 ) : ViewModel() {
     private val marketId: String = savedStateHandle[CarListDestination.marketIdArg] ?: ""
 
@@ -56,7 +59,7 @@ class CarListViewModel @Inject constructor(
                             filters.bodies.find { it.first == car.vehicleBody }?.second == true &&
                             car.priceInformation.price.toFloat() in filters.selectedPriceRange
                 }
-
+            Log.e("TAGTAG", selectedClassCars.map { it.isBookmarked }.toString())
             CarListUiState(
                 carModels = selectedClassCars,
                 carClasses = classes,
@@ -129,7 +132,9 @@ class CarListViewModel @Inject constructor(
     }
 
     fun bookmarkCar(carModel: CarModel) {
-
+        viewModelScope.launch {
+            toggleBookmarkCarUseCase(carModel)
+        }
     }
 }
 
