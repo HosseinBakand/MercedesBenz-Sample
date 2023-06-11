@@ -89,7 +89,8 @@ fun CarListScreen(
         onBookmarkCar = viewModel::bookmarkCar,
         onFilterClick = {
             showFilterDialog = true
-        })
+        }
+    )
 
     if (showFilterDialog) {
         FilterDialog(onDismiss = { showFilterDialog = false })
@@ -134,7 +135,7 @@ fun CarListScreen(
                         )
                         .padding(4.dp)
                         .clip(shape = MaterialTheme.shapes.small),
-                    onClick = { },
+                    onClick = onFilterClick,
                 ) {
                     Icon(
                         modifier = Modifier
@@ -246,11 +247,7 @@ private fun RowScope.SearchTextField(
         ),
         maxLines = 1,
         singleLine = true,
-
         )
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
 }
 
 @Composable
