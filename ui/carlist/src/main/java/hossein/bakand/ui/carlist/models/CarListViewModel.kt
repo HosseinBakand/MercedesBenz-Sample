@@ -127,6 +127,10 @@ class CarListViewModel @Inject constructor(
             )
         }
     }
+
+    fun bookmarkCar(carModel: CarModel) {
+
+    }
 }
 
 data class CarListUiState(

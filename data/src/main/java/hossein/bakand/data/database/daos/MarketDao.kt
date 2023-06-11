@@ -16,7 +16,7 @@ interface MarketDao {
     @Query("SELECT * FROM markets")
     fun getMarkets(): Flow<List<MarketEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)//todo thick
     suspend fun insertCarModels(marketEntities: List<CarModelEntity>)
 
     @Query("SELECT * FROM car_models WHERE market_id = :marketId")

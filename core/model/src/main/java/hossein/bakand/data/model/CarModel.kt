@@ -13,6 +13,7 @@ data class CarModel(
     val modelYear: String,
     val changeYear: String? = null,
     val priceInformation: Price,
+    val isBookmarked: Boolean = false
 )
 
 

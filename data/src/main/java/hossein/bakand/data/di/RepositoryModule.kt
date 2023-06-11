@@ -4,7 +4,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import hossein.bakand.data.repositoriesImpl.CarModelRepositoryImpl
 import hossein.bakand.data.repositoriesImpl.MarketRepositoryImpl
+import hossein.bakand.domain.repositories.CarModelRepository
 import hossein.bakand.domain.repositories.MarketRepository
 
 @Module
@@ -12,5 +14,8 @@ import hossein.bakand.domain.repositories.MarketRepository
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun getMarketRepository(repository: MarketRepositoryImpl):MarketRepository
+    abstract fun getMarketRepository(repository: MarketRepositoryImpl): MarketRepository
+
+    @Binds
+    abstract fun getCarModelRepository(repository: CarModelRepositoryImpl): CarModelRepository
 }

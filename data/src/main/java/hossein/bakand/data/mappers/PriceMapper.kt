@@ -5,3 +5,5 @@ import hossein.bakand.data.model.Price
 
 
 fun PriceDataModel.toModel() = Price(price = price, currency = currency)
+
+fun Price.toDataModel() = PriceDataModel(price = price, currency = currency)
