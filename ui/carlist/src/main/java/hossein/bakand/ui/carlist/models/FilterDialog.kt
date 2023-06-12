@@ -40,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hossein.bakand.core.commonui.theme.MercedesBenzTheme
 import hossein.bakand.data.model.VehicleBody
+import hossein.bakand.data.model.vehicleBodyPreview
 
 @Composable
 fun FilterDialog(
@@ -64,22 +65,29 @@ fun SettingsDialog(
     onToggleBrandEnable: (String) -> Unit,
     onToggleBodyEnable: (String) -> Unit,
 ) {
-    val configuration = LocalConfiguration.current
-
     AlertDialog(
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-        modifier = Modifier.widthIn(max = configuration.screenWidthDp.dp - 80.dp),
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+        ),
+        modifier = Modifier.fillMaxWidth(fraction = 0.9f),
         onDismissRequest = { onDismiss() },
         title = {
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = "Filter",
                 style = MaterialTheme.typography.titleLarge,
             )
         },
         text = {
 
-            Column(Modifier.verticalScroll(rememberScrollState())) {
+            Column(
+                Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 CarBrandComponent(filterState.brands, onItemClick = onToggleBrandEnable)
+
                 BodyTypeComponent(filterState.bodies, onItemClick = onToggleBodyEnable)
                 PriceRangeComponent(
                     filterState.priceRange,
@@ -218,11 +226,21 @@ fun SelectableItem(
 @Composable
 private fun PreviewSettingsDialog() {
     MercedesBenzTheme {
-        Column(modifier = Modifier.background(color = Color.Cyan)) {
-            PriceRangeComponent(Range(0f, 1f), Range(0f, 1f)) {}
-        }
-//        SettingsDialog(
-//            onDismiss = {},
-//        )
+//        Column(modifier = Modifier.background(color = Color.Cyan)) {
+//            PriceRangeComponent(Range(0f, 1f), Range(0f, 1f)) {}
+//        }
+        SettingsDialog(
+            onDismiss = {},
+            filterState = FilterState(
+                priceRange = Range(100f, 1000f),
+                selectedPriceRange = Range(100f, 1000f),
+                brands = setOf("A", "B", "C", "D").map { it to (it == "A" || it == "C") }.toSet(),
+                bodies = vehicleBodyPreview.map { it to (it.bodyID == "1" || it.bodyID == "3") }
+                    .toSet()
+            ),
+            onPriceRangeChange = {},
+            onToggleBodyEnable = {},
+            onToggleBrandEnable = {}
+        )
     }
 }
