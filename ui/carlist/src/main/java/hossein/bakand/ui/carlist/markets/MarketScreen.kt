@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,8 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hossein.bakand.core.commonui.DevicePreviews
@@ -36,6 +39,7 @@ import hossein.bakand.core.commonui.component.BCTopAppBar
 import hossein.bakand.core.commonui.theme.MercedesBenzTheme
 import hossein.bakand.data.model.Market
 import hossein.bakand.data.model.marketPreview
+import hossein.bakand.core.commonui.R
 
 @Composable
 fun MarketScreen(
@@ -48,27 +52,38 @@ fun MarketScreen(
     )
 }
 
+fun countryCodeToFlagEmoji(countryCode: String): String {
+    val countryCodeUpperCase = countryCode.uppercase()
+
+    val firstChar = Character.codePointAt(countryCodeUpperCase, 0) - 0x41 + 0x1F1E6
+    val secondChar = Character.codePointAt(countryCodeUpperCase, 1) - 0x41 + 0x1F1E6
+
+    return String(Character.toChars(firstChar)) + String(Character.toChars(secondChar))
+}
+
+
 @Composable
 fun MarketScreen(
     uiState: MarketUiState, onMarketClick: (String) -> Unit
 ) {
-    Scaffold(modifier = Modifier.navigationBarsPadding(),
-//        backgroundColor = MaterialTheme.colorScheme.background,
+
+    Scaffold(
+        modifier = Modifier
+            .navigationBarsPadding(),
         topBar = {
             BCTopAppBar(
-                title = "Markets"
+                title = "Markets "
             )
-        }) { innerPadding ->
+        }
+    ) { innerPadding ->
         if (uiState.markets is List<*>) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag("book:chapter")
                     .padding(innerPadding)
-//                    .consumedWindowInsets(innerPadding)
-//                , contentPadding = PaddingValues(all = 16.dp)
+                    .background(color = MaterialTheme.colorScheme.background),
             ) {
-
                 itemsIndexed(uiState.markets) { index, market ->
                     MarketItem(market, onMarketClick)
 
@@ -86,72 +101,76 @@ fun MarketScreen(
 }
 
 
-
 @Composable
 private fun ContentDivider() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(0.5.dp)
-            .background(MaterialTheme.colorScheme.primary)
+            .padding(start = 72.dp)
+            .height(1.dp)
+            .background(Color(0xFFEEEEEF))
             .padding(horizontal = 16.dp)
     )
 }
 
 @Composable
 fun MarketItem(market: Market, onClick: (String) -> Unit) {
-    Column(
+    Row(
         modifier = Modifier
+            .fillMaxWidth()
             .clickable {
                 onClick(market.marketId)
-            }
-            .padding(horizontal = 24.dp, vertical = 8.dp)
+            }.padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
+        Text(
+            modifier = Modifier,
+            text = countryCodeToFlagEmoji(market.country.code),
+            style = MaterialTheme.typography.titleLarge,
+            fontSize = 32.sp
+        )
+        Column(
+            modifier = Modifier,
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-
-            Text(
-                modifier = Modifier, text = "Country: ",
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold
-            )
             Text(
                 modifier = Modifier,
                 text = market.country.title,
                 style = MaterialTheme.typography.labelLarge,
             )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                modifier = Modifier,
-                text = "Language: ",
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold
-            )
+
             Text(
                 modifier = Modifier,
                 text = market.language.title,
-                style = MaterialTheme.typography.labelLarge,
-            )
-        }
-        Spacer(modifier = Modifier.size(4.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                modifier = Modifier,
-                text = "Kernel Type:",
                 style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Bold
+                color = Color(0xFF97979A)
             )
-            Kernels(market.kernelType)
+//
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.spacedBy(8.dp)
+//            ) {
+//                Text(
+//                    modifier = Modifier,
+//                    text = "Kernel Type:",
+//                    style = MaterialTheme.typography.labelMedium,
+//                    fontWeight = FontWeight.Bold,
+//                    color = Color(0xFF97979A)
+//                )
+//                Kernels(market.kernelType)
+//            }
         }
+        Spacer(modifier = Modifier.weight(1f))
+        Icon(
+            painter = painterResource(id = R.drawable.ic_arrow_right),
+            modifier = Modifier.size(24.dp),
+            contentDescription = null,
+            tint = Color(0xFF97979A)
+        )
     }
+
 }
 
 @Composable
@@ -164,7 +183,7 @@ fun Kernels(kernels: List<String>) {
             Text(
                 modifier = Modifier
                     .background(
-                        MaterialTheme.colorScheme.secondary,
+                        Color(0xFF97979A),
                         shape = MaterialTheme.shapes.medium
                     )
                     .padding(horizontal = 6.dp, vertical = 2.dp),
