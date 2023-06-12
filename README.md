@@ -27,7 +27,9 @@ The application is built using the following technologies and libraries:
 
 Here are some screenshots from the application:
 
-![Screenshot 1](submition/Screenshot1.png) ![Screenshot 2](submition/Screenshot2.png) ![Screenshot 3](submition/Screenshot3.png)
+| Screenshot 1 | Screenshot 2 | Screenshot 3 |
+|--------------|--------------|--------------|
+| <img src="submition/Screenshot1.png" width="200"> | <img src="submition/Screenshot2.png" width="200"> | <img src="submition/Screenshot3.png" width="200"> |
 
 
 ## Getting Started
