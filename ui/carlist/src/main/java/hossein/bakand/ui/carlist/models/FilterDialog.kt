@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -31,9 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.util.toRange
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,48 +69,61 @@ fun SettingsDialog(
     onToggleBrandEnable: (String) -> Unit,
     onToggleBodyEnable: (String) -> Unit,
 ) {
-    AlertDialog(
+    Dialog(
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
             dismissOnBackPress = true,
             dismissOnClickOutside = true,
         ),
-        modifier = Modifier.fillMaxWidth(fraction = 0.9f),
         onDismissRequest = { onDismiss() },
-        title = {
-            Text(
+    ) {
+        Column(
+            Modifier
+                .fillMaxWidth(0.9f)
+                .verticalScroll(rememberScrollState())
+                .clip(shape = MaterialTheme.shapes.large)
+                .background(color = MaterialTheme.colorScheme.background)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Box(
                 modifier = Modifier.fillMaxWidth(),
-                text = "Filter",
-                style = MaterialTheme.typography.titleLarge,
-            )
-        },
-        text = {
-
-            Column(
-                Modifier.verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                CarBrandComponent(filterState.brands, onItemClick = onToggleBrandEnable)
-
-                BodyTypeComponent(filterState.bodies, onItemClick = onToggleBodyEnable)
-                PriceRangeComponent(
-                    filterState.priceRange,
-                    filterState.selectedPriceRange,
-                    onRangeChanged = onPriceRangeChange
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "Filter",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
                 )
             }
-        },
-        confirmButton = {
-            Text(
-                text = "OK",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .clickable { onDismiss() },
+            CarBrandComponent(filterState.brands, onItemClick = onToggleBrandEnable)
+
+            Spacer(modifier = Modifier.height(8.dp))
+            BodyTypeComponent(filterState.bodies, onItemClick = onToggleBodyEnable)
+            Spacer(modifier = Modifier.height(8.dp))
+            PriceRangeComponent(
+                filterState.priceRange,
+                filterState.selectedPriceRange,
+                onRangeChanged = onPriceRangeChange
             )
-        },
-    )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "OK",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .clip(shape = MaterialTheme.shapes.large)
+                        .align(Alignment.CenterEnd)
+                        .clickable { onDismiss() }
+                        .padding(16.dp)
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -118,22 +135,28 @@ fun PriceRangeComponent(
     Text(text = "Price Range")
     var sliderPosition by remember { mutableStateOf(selectedPriceRange.lower..selectedPriceRange.upper) }
 
-    Text(text = sliderPosition.start.toString())
     RangeSlider(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
+            .fillMaxWidth(),
         value = sliderPosition,
         onValueChange = { sliderPosition = it },
         valueRange = priceRange.lower..priceRange.upper,
         onValueChangeFinished = {
             onRangeChanged(sliderPosition.toRange())
-        })
-    Text(text = sliderPosition.endInclusive.toString())
+        }
+    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        Text(text = sliderPosition.start.toString())
+        Text(text = sliderPosition.endInclusive.toString())
+    }
 }
 
 @Composable
-fun BodyTypeComponent(bodies: Set<Pair<VehicleBody, Boolean>>, onItemClick: (String) -> Unit) {
+fun BodyTypeComponent(bodies: List<Pair<VehicleBody, Boolean>>, onItemClick: (String) -> Unit) {
     Text(text = "Body Type")
     SelectableFlowRow(
         bodies.toList().map { it.first.bodyName to it.second },
@@ -142,7 +165,7 @@ fun BodyTypeComponent(bodies: Set<Pair<VehicleBody, Boolean>>, onItemClick: (Str
 }
 
 @Composable
-fun CarBrandComponent(brands: Set<Pair<String, Boolean>>, onItemClick: (String) -> Unit) {
+fun CarBrandComponent(brands: List<Pair<String, Boolean>>, onItemClick: (String) -> Unit) {
     Text(text = "Car Brands")
     SelectableFlowRow(brands.toList(), onItemClick = onItemClick)
 }
@@ -181,7 +204,7 @@ fun SelectableItem(
         targetValue = if (isSelected) {
             MaterialTheme.colorScheme.onPrimary
         } else {
-            MaterialTheme.colorScheme.onSecondary
+            MaterialTheme.colorScheme.primary
         },
         animationSpec = SwitchAnimation
     )
@@ -193,7 +216,7 @@ fun SelectableItem(
         targetValue = if (isSelected) {
             MaterialTheme.colorScheme.primary
         } else {
-            MaterialTheme.colorScheme.secondary
+            MaterialTheme.colorScheme.background
         },
         animationSpec = SwitchAnimation
     )
@@ -234,9 +257,9 @@ private fun PreviewSettingsDialog() {
             filterState = FilterState(
                 priceRange = Range(100f, 1000f),
                 selectedPriceRange = Range(100f, 1000f),
-                brands = setOf("A", "B", "C", "D").map { it to (it == "A" || it == "C") }.toSet(),
+                brands = listOf("A", "B", "C", "D").map { it to (it == "A" || it == "C") },
                 bodies = vehicleBodyPreview.map { it to (it.bodyID == "1" || it.bodyID == "3") }
-                    .toSet()
+
             ),
             onPriceRangeChange = {},
             onToggleBodyEnable = {},

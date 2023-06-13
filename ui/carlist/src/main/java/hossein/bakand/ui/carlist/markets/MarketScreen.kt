@@ -1,5 +1,6 @@
 package hossein.bakand.ui.carlist.markets
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +23,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,7 +38,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hossein.bakand.core.commonui.DevicePreviews
-import hossein.bakand.core.commonui.component.BCTopAppBar
 import hossein.bakand.core.commonui.theme.MercedesBenzTheme
 import hossein.bakand.data.model.Market
 import hossein.bakand.data.model.marketPreview
@@ -71,9 +73,7 @@ fun MarketScreen(
         modifier = Modifier
             .navigationBarsPadding(),
         topBar = {
-            BCTopAppBar(
-                title = "Markets "
-            )
+            HomeTopAppBar()
         }
     ) { innerPadding ->
         if (uiState.markets is List<*>) {
@@ -120,7 +120,8 @@ fun MarketItem(market: Market, onClick: (String) -> Unit) {
             .fillMaxWidth()
             .clickable {
                 onClick(market.marketId)
-            }.padding(16.dp),
+            }
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -146,21 +147,7 @@ fun MarketItem(market: Market, onClick: (String) -> Unit) {
                 style = MaterialTheme.typography.labelMedium,
                 color = Color(0xFF97979A)
             )
-//
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.spacedBy(8.dp)
-//            ) {
-//                Text(
-//                    modifier = Modifier,
-//                    text = "Kernel Type:",
-//                    style = MaterialTheme.typography.labelMedium,
-//                    fontWeight = FontWeight.Bold,
-//                    color = Color(0xFF97979A)
-//                )
-//                Kernels(market.kernelType)
-//            }
+
         }
         Spacer(modifier = Modifier.weight(1f))
         Icon(
@@ -195,6 +182,28 @@ fun Kernels(kernels: List<String>) {
     }
 }
 
+@Composable
+fun HomeTopAppBar() {
+    Surface(
+        color = MaterialTheme.colorScheme.background, shadowElevation = 4.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .background(color = MaterialTheme.colorScheme.background),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                modifier = Modifier
+                    .fillMaxHeight(0.75f)
+                    .fillMaxWidth(),
+                painter = painterResource(id = R.drawable.ic_mercedes_benz),
+                contentDescription = null
+            )
+        }
+    }
+}
 
 @DevicePreviews
 @Composable

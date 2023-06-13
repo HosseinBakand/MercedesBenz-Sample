@@ -1,7 +1,6 @@
 package hossein.bakand.ui.carlist.models
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,22 +11,15 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +27,6 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
@@ -43,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,35 +51,36 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hossein.bakand.core.commonui.DevicePreviews
 import hossein.bakand.core.commonui.component.BCTopAppBar
-import hossein.bakand.core.commonui.R
 import hossein.bakand.core.commonui.theme.MercedesBenzTheme
 import hossein.bakand.data.model.CarModel
-import hossein.bakand.data.model.carModelPreview
+import hossein.bakand.ui.carlist.markets.countryCodeToFlagEmoji
 
 @Composable
 fun CarListScreen(
-    viewModel: CarListViewModel = hiltViewModel(), onCarClick: (String) -> Unit
+    viewModel: CarListViewModel = hiltViewModel(),
+    onCarClick: (String) -> Unit,
+    onBackClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showFilterDialog by rememberSaveable {
         mutableStateOf(false)
     }
-    CarListScreen(uiState = uiState,
+    CarListScreen(
+        uiState = uiState,
         onSelectClass = viewModel::setSelectedClass,
         onBookmarkCar = viewModel::bookmarkCar,
         onFilterClick = {
             showFilterDialog = true
-        }
+        },
+        onBackClick = onBackClick
     )
 
     if (showFilterDialog) {
@@ -103,13 +94,19 @@ fun CarListScreen(
     uiState: CarListUiState,
     onSelectClass: (Int) -> Unit,
     onFilterClick: () -> Unit,
+    onBackClick: () -> Unit,
     onBookmarkCar: (CarModel) -> Unit
 ) {
     Scaffold(modifier = Modifier
         .navigationBarsPadding()
-        .background(color = MaterialTheme.colorScheme.background), topBar = {
-        BCTopAppBar(title = "Models")
-    }) { innerPadding ->
+        .background(color = MaterialTheme.colorScheme.background),
+        topBar = {
+            val marketTitle  = uiState.market?.country?.let{
+                it.title + " Market " + countryCodeToFlagEmoji(it.code)
+            }?:""
+            BCTopAppBar(title = marketTitle, onBackClick = onBackClick)
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -118,20 +115,14 @@ fun CarListScreen(
         ) {
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
             ) {
-                SearchTextField(
-                    onSearchQueryChanged = {},
-                    searchQuery = "",
-                    onSearchTriggered = {}
-                )
+                SearchTextField(onSearchQueryChanged = {}, searchQuery = "", onSearchTriggered = {})
                 IconButton(
                     modifier = Modifier
                         .padding(end = 16.dp)
                         .background(
-                            MaterialTheme.colorScheme.primary,
-                            shape = MaterialTheme.shapes.small
+                            MaterialTheme.colorScheme.primary, shape = MaterialTheme.shapes.small
                         )
                         .padding(4.dp)
                         .clip(shape = MaterialTheme.shapes.small),
@@ -193,8 +184,7 @@ private fun RowScope.SearchTextField(
         ),
         leadingIcon = {
             Icon(
-                modifier = Modifier
-                    .size(24.dp),
+                modifier = Modifier.size(24.dp),
                 painter = searchIcon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
@@ -208,8 +198,7 @@ private fun RowScope.SearchTextField(
                     },
                 ) {
                     Icon(
-                        modifier = Modifier
-                            .size(24.dp),
+                        modifier = Modifier.size(24.dp),
                         painter = closeIcon,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface,
@@ -247,7 +236,7 @@ private fun RowScope.SearchTextField(
         ),
         maxLines = 1,
         singleLine = true,
-        )
+    )
 }
 
 @Composable
@@ -365,6 +354,12 @@ fun CarItem(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.secondary
             )
+            Text(
+                modifier = Modifier,
+                text = carModel.priceInformation.currency,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 modifier = Modifier
@@ -439,7 +434,7 @@ fun MBTabRow(
 fun CarListPreview() {
     MercedesBenzTheme() {
         Box(modifier = Modifier.background(Color.White)) {
-            CarListScreen(uiState = CarListUiState(), {}, {}, {})
+            CarListScreen(uiState = CarListUiState(), {}, {}, {}, {})
 
         }
     }

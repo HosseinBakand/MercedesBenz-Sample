@@ -20,6 +20,9 @@ class MarketRepositoryImpl @Inject constructor(
     override fun getAllMarket(): Flow<List<Market>> {
         return marketDao.getMarkets().map { markets -> markets.map { it.toModel() } }
     }
+    override suspend fun getMarket(marketId: String): Market {
+        return marketDao.getMarket(marketId).toModel()
+    }
 
     override fun getMarketModels(marketId: String): Flow<List<CarModel>> {
         return marketDao.getMarketCarModels(marketId)

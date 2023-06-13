@@ -3,6 +3,10 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven {
+            isAllowInsecureProtocol = true
+            url = uri("http://maven.partdp.ir")
+        }
     }
 }
 dependencyResolutionManagement {
@@ -10,6 +14,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            isAllowInsecureProtocol = true
+            url = uri("http://maven.partdp.ir")
+        }
     }
 }
 rootProject.name = "MercedesBenzTask"
