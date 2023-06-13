@@ -1,5 +1,10 @@
 package hossein.bakand.ui.carlist.markets
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +24,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,15 +48,17 @@ import hossein.bakand.core.commonui.theme.MercedesBenzTheme
 import hossein.bakand.data.model.Market
 import hossein.bakand.data.model.marketPreview
 import hossein.bakand.core.commonui.R
+import hossein.bakand.domain.workers.SyncStatus
 
 @Composable
 fun MarketScreen(
     viewModel: MarketViewModel = hiltViewModel(), onMarketClick: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isSyncing by viewModel.syncingState.collectAsStateWithLifecycle()
 
     MarketScreen(
-        uiState = uiState, onMarketClick = onMarketClick
+        isSyncing = isSyncing == SyncStatus.Running, uiState = uiState, onMarketClick = onMarketClick
     )
 }
 
@@ -66,36 +74,71 @@ fun countryCodeToFlagEmoji(countryCode: String): String {
 
 @Composable
 fun MarketScreen(
-    uiState: MarketUiState, onMarketClick: (String) -> Unit
+    isSyncing: Boolean,
+    uiState: MarketUiState,
+    onMarketClick: (String) -> Unit
 ) {
+    val isFeedLoading = uiState == MarketUiState.Loading
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .background(color = MaterialTheme.colorScheme.background),
+            topBar = {
+                HomeTopAppBar()
+            }
+        ) { innerPadding ->
+            if (uiState is MarketUiState.Success) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag("book:chapter")
+                        .padding(innerPadding)
+                        .background(color = MaterialTheme.colorScheme.background),
+                ) {
+                    itemsIndexed(uiState.markets) { index, market ->
+                        MarketItem(market, onMarketClick)
 
-    Scaffold(
-        modifier = Modifier
-            .navigationBarsPadding(),
-        topBar = {
-            HomeTopAppBar()
-        }
-    ) { innerPadding ->
-        if (uiState.markets is List<*>) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag("book:chapter")
-                    .padding(innerPadding)
-                    .background(color = MaterialTheme.colorScheme.background),
-            ) {
-                itemsIndexed(uiState.markets) { index, market ->
-                    MarketItem(market, onMarketClick)
-
-                    if (index < uiState.markets.size) {
-                        ContentDivider()
+                        if (index < uiState.markets.size) {
+                            ContentDivider()
+                        }
                     }
                 }
             }
-        } else {
-            CircularProgressIndicator(
-                modifier = Modifier.fillMaxSize(),
-            )
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center),
+            visible = isSyncing || isFeedLoading,
+            enter = slideInVertically(
+                initialOffsetY = { fullHeight -> -fullHeight },
+            ) + fadeIn(),
+            exit = slideOutVertically(
+                targetOffsetY = { fullHeight -> -fullHeight },
+            ) + fadeOut(),
+        ) {
+            Box(
+            ) {
+                Card(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.Center),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+
+                    ) {
+
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(16.dp)
+                            .size(36.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
         }
     }
 }
@@ -212,7 +255,10 @@ fun MarketScreenPreview() {
 
     MercedesBenzTheme() {
         Box(modifier = Modifier.background(Color.White)) {
-            MarketScreen(uiState = MarketUiState(markets = marketPreview)) {
+            MarketScreen(
+                isSyncing = true,
+                uiState = MarketUiState.Success(markets = marketPreview)
+            ) {
 
             }
 //            MarketItem(marketPreview.first()) {}
