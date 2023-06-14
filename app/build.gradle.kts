@@ -69,6 +69,7 @@ dependencies {
     testImplementation(TestLibraries.Junit)
 
     implementation(Libraries.Hilt)
+    implementation(Libraries.HiltExtWork)
     implementation(Libraries.HiltNavigation)
     kapt(Libraries.HiltCompiler)
 }

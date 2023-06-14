@@ -45,6 +45,10 @@ class CarListViewModel @Inject constructor(
     private val _filterState = MutableStateFlow(FilterState())
     val filterState: StateFlow<FilterState> = _filterState
 
+    private val _NetworkState: MutableStateFlow<NetworkState> =
+        MutableStateFlow(NetworkState.Loading)
+    val networkState: StateFlow<NetworkState> = _NetworkState
+
     private val marketCarModels = getMarketCarModelsUseCase.flow
         .onStart { getMarketCarModelsUseCase.invoke(marketId) }
         .catch { emit(emptyList()) }
@@ -78,9 +82,7 @@ class CarListViewModel @Inject constructor(
             )
 
     init {
-        viewModelScope.launch {
-            fetchMarketCarModelsUseCase(marketId)
-        }
+        retry()
         marketCarModels.onEach { cars ->
             val minPrice: Float =
                 cars.minOfOrNull { it.priceInformation.price }?.toFloat() ?: 0f
@@ -141,6 +143,22 @@ class CarListViewModel @Inject constructor(
             toggleBookmarkCarUseCase(carModel)
         }
     }
+
+    fun retry() {
+        viewModelScope.launch {
+            _NetworkState.update {
+                NetworkState.Loading
+            }
+            val fetchResult = fetchMarketCarModelsUseCase(marketId)
+            _NetworkState.update {
+                if (fetchResult) {
+                    NetworkState.Success
+                } else {
+                    NetworkState.Failed
+                }
+            }
+        }
+    }
 }
 
 fun <T> List<T>.replace(prev: T, next: T): List<T> {
@@ -157,6 +175,12 @@ data class CarListUiState(
     val selectedClassInx: Int = 0,
     val market: Market? = null
 )
+
+sealed class NetworkState {
+    object Loading : NetworkState()
+    object Success : NetworkState()
+    object Failed : NetworkState()
+}
 
 data class FilterState(
     val priceRange: Range<Float> = Range(0f, 0f),

@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -58,7 +59,9 @@ fun MarketScreen(
     val isSyncing by viewModel.syncingState.collectAsStateWithLifecycle()
 
     MarketScreen(
-        isSyncing = isSyncing == SyncStatus.Running, uiState = uiState, onMarketClick = onMarketClick
+        syncStatus = isSyncing, uiState = uiState, onMarketClick = onMarketClick, onRetry = {
+            viewModel.retrySync()
+        }
     )
 }
 
@@ -74,18 +77,21 @@ fun countryCodeToFlagEmoji(countryCode: String): String {
 
 @Composable
 fun MarketScreen(
-    isSyncing: Boolean,
+    syncStatus: SyncStatus,
     uiState: MarketUiState,
-    onMarketClick: (String) -> Unit
+    onMarketClick: (String) -> Unit,
+    onRetry: () -> Unit,
 ) {
-    val isFeedLoading = uiState == MarketUiState.Loading
+    val isLoading = uiState == MarketUiState.Loading
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier
                 .navigationBarsPadding()
                 .background(color = MaterialTheme.colorScheme.background),
             topBar = {
-                HomeTopAppBar()
+                Column {
+                    HomeTopAppBar()
+                }
             }
         ) { innerPadding ->
             if (uiState is MarketUiState.Success) {
@@ -111,7 +117,7 @@ fun MarketScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.Center),
-            visible = isSyncing || isFeedLoading,
+            visible = syncStatus == SyncStatus.Running || isLoading,
             enter = slideInVertically(
                 initialOffsetY = { fullHeight -> -fullHeight },
             ) + fadeIn(),
@@ -248,6 +254,39 @@ fun HomeTopAppBar() {
     }
 }
 
+@Composable
+fun InternetError(onRetry: () -> Unit) {
+    Surface(
+        color = MaterialTheme.colorScheme.primary, shadowElevation = 2.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .padding(8.dp)
+                .background(color = MaterialTheme.colorScheme.primary),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Internet Connection error",
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .clickable(onClick = onRetry)
+                    .padding(8.dp),
+                text = "Retry",
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodySmall
+            )
+
+        }
+    }
+}
+
 @DevicePreviews
 @Composable
 fun MarketScreenPreview() {
@@ -256,12 +295,11 @@ fun MarketScreenPreview() {
     MercedesBenzTheme() {
         Box(modifier = Modifier.background(Color.White)) {
             MarketScreen(
-                isSyncing = true,
-                uiState = MarketUiState.Success(markets = marketPreview)
-            ) {
-
-            }
-//            MarketItem(marketPreview.first()) {}
+                syncStatus = SyncStatus.Success,
+                uiState = MarketUiState.Success(markets = marketPreview),
+                onRetry = {},
+                onMarketClick = {}
+            )
         }
     }
 }

@@ -51,6 +51,10 @@ class MarketViewModel @Inject constructor(
             fetchMarketsUseCase(Unit)
         }
     }
+
+    fun retrySync() {
+        syncStatusMonitor.requestSync()
+    }
 }
 
 sealed class MarketUiState {

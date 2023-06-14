@@ -1,6 +1,11 @@
 package hossein.bakand.ui.carlist.models
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,6 +25,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -61,6 +69,9 @@ import hossein.bakand.core.commonui.DevicePreviews
 import hossein.bakand.core.commonui.component.BCTopAppBar
 import hossein.bakand.core.commonui.theme.MercedesBenzTheme
 import hossein.bakand.data.model.CarModel
+import hossein.bakand.domain.workers.SyncStatus
+import hossein.bakand.ui.carlist.markets.HomeTopAppBar
+import hossein.bakand.ui.carlist.markets.InternetError
 import hossein.bakand.ui.carlist.markets.countryCodeToFlagEmoji
 
 @Composable
@@ -70,6 +81,7 @@ fun CarListScreen(
     onBackClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val networkState by viewModel.networkState.collectAsStateWithLifecycle()
     var showFilterDialog by rememberSaveable {
         mutableStateOf(false)
     }
@@ -80,7 +92,9 @@ fun CarListScreen(
         onFilterClick = {
             showFilterDialog = true
         },
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        networkState = networkState,
+        onRetry = viewModel::retry
     )
 
     if (showFilterDialog) {
@@ -95,63 +109,120 @@ fun CarListScreen(
     onSelectClass: (Int) -> Unit,
     onFilterClick: () -> Unit,
     onBackClick: () -> Unit,
-    onBookmarkCar: (CarModel) -> Unit
+    onRetry: () -> Unit,
+    onBookmarkCar: (CarModel) -> Unit,
+    networkState: NetworkState,
 ) {
-    Scaffold(modifier = Modifier
-        .navigationBarsPadding()
-        .background(color = MaterialTheme.colorScheme.background),
-        topBar = {
-            val marketTitle  = uiState.market?.country?.let{
-                it.title + " Market " + countryCodeToFlagEmoji(it.code)
-            }?:""
-            BCTopAppBar(title = marketTitle, onBackClick = onBackClick)
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(color = MaterialTheme.colorScheme.background)
-        ) {
-
-            Row(
-                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-            ) {
-                SearchTextField(onSearchQueryChanged = {}, searchQuery = "", onSearchTriggered = {})
-                IconButton(
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .background(
-                            MaterialTheme.colorScheme.primary, shape = MaterialTheme.shapes.small
-                        )
-                        .padding(4.dp)
-                        .clip(shape = MaterialTheme.shapes.small),
-                    onClick = onFilterClick,
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .padding(4.dp),
-                        painter = painterResource(hossein.bakand.ui.carlist.R.drawable.ic_filter),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(modifier = Modifier
+            .navigationBarsPadding()
+            .background(color = MaterialTheme.colorScheme.background),
+            topBar = {
+                Column {
+                    val marketTitle = uiState.market?.country?.let {
+                        it.title + " Market " + countryCodeToFlagEmoji(it.code)
+                    } ?: ""
+                    BCTopAppBar(title = marketTitle, onBackClick = onBackClick)
+                    AnimatedVisibility(
+                        modifier = Modifier,
+                        visible = networkState == NetworkState.Failed,
+                        enter = slideInVertically(
+                            initialOffsetY = { fullHeight -> -fullHeight },
+                        ) + fadeIn(),
+                        exit = slideOutVertically(
+                            targetOffsetY = { fullHeight -> -fullHeight },
+                        ) + fadeOut(),
+                    ) {
+                        InternetError(onRetry)
+                    }
                 }
-            }
 
-            val classes = uiState.carClasses
-            if (classes.size > 1) {
-                MBTabRow(selectedTabIndex = uiState.selectedClassInx) {
-                    classes.forEachIndexed { index, carClass ->
-                        MBTab(
-                            selected = uiState.selectedClassInx == index,
-                            onClick = { onSelectClass(index) },
-                            text = { Text(text = carClass.className) },
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(color = MaterialTheme.colorScheme.background)
+            ) {
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SearchTextField(
+                        onSearchQueryChanged = {},
+                        searchQuery = "",
+                        onSearchTriggered = {})
+                    IconButton(
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .background(
+                                MaterialTheme.colorScheme.primary,
+                                shape = MaterialTheme.shapes.small
+                            )
+                            .padding(4.dp)
+                            .clip(shape = MaterialTheme.shapes.small),
+                        onClick = onFilterClick,
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .padding(4.dp),
+                            painter = painterResource(hossein.bakand.ui.carlist.R.drawable.ic_filter),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }
+
+                val classes = uiState.carClasses
+                if (classes.size > 1) {
+                    MBTabRow(selectedTabIndex = uiState.selectedClassInx) {
+                        classes.forEachIndexed { index, carClass ->
+                            MBTab(
+                                selected = uiState.selectedClassInx == index,
+                                onClick = { onSelectClass(index) },
+                                text = { Text(text = carClass.className) },
+                            )
+                        }
+                    }
+                }
+                CarsComponent(cars = uiState.carModels, onBookmarkCar = onBookmarkCar)
             }
-            CarsComponent(cars = uiState.carModels, onBookmarkCar = onBookmarkCar)
+        }
+        AnimatedVisibility(
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center),
+            visible = networkState == NetworkState.Loading,
+            enter = slideInVertically(
+                initialOffsetY = { fullHeight -> -fullHeight },
+            ) + fadeIn(),
+            exit = slideOutVertically(
+                targetOffsetY = { fullHeight -> -fullHeight },
+            ) + fadeOut(),
+        ) {
+            Box(
+            ) {
+                Card(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.Center),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+
+                    ) {
+
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(16.dp)
+                            .size(36.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
         }
     }
 }
@@ -434,7 +505,15 @@ fun MBTabRow(
 fun CarListPreview() {
     MercedesBenzTheme() {
         Box(modifier = Modifier.background(Color.White)) {
-            CarListScreen(uiState = CarListUiState(), {}, {}, {}, {})
+            CarListScreen(
+                uiState = CarListUiState(),
+                onSelectClass = {},
+                onFilterClick = {},
+                onBackClick = {},
+                onRetry = {},
+                onBookmarkCar = {},
+                networkState = NetworkState.Success
+            )
 
         }
     }
