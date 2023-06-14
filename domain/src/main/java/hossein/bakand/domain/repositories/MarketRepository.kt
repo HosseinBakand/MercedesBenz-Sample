@@ -8,5 +8,6 @@ interface MarketRepository {
     fun getAllMarket(): Flow<List<Market>>
     fun getMarketModels(marketId : String): Flow<List<CarModel>>
     suspend fun updateMarkets() : Boolean
+    suspend fun getMarket(marketId : String): Market
     suspend fun fetchMarketCarModels(marketId: String) : Boolean
 }

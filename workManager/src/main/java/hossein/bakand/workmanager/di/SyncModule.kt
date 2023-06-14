@@ -20,14 +20,14 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import hossein.bakand.domain.workers.SyncStatus
-import hossein.bakand.workmanager.sync.WorkManagerSyncStatus
+import hossein.bakand.domain.workers.SyncStatusMonitor
+import hossein.bakand.workmanager.sync.WorkManagerSyncStatusMonitor
 
 @Module
 @InstallIn(SingletonComponent::class)
 interface SyncModule {
     @Binds
     fun bindsSyncStatusMonitor(
-        syncStatusMonitor: WorkManagerSyncStatus,
-    ): SyncStatus
+        syncStatusMonitor: WorkManagerSyncStatusMonitor,
+    ): SyncStatusMonitor
 }

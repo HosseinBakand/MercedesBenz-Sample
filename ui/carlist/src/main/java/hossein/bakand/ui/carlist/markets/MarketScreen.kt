@@ -1,5 +1,11 @@
 package hossein.bakand.ui.carlist.markets
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -7,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,38 +24,44 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hossein.bakand.core.commonui.DevicePreviews
-import hossein.bakand.core.commonui.component.BCTopAppBar
 import hossein.bakand.core.commonui.theme.MercedesBenzTheme
 import hossein.bakand.data.model.Market
 import hossein.bakand.data.model.marketPreview
 import hossein.bakand.core.commonui.R
+import hossein.bakand.domain.workers.SyncStatus
 
 @Composable
 fun MarketScreen(
     viewModel: MarketViewModel = hiltViewModel(), onMarketClick: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isSyncing by viewModel.syncingState.collectAsStateWithLifecycle()
 
     MarketScreen(
-        uiState = uiState, onMarketClick = onMarketClick
+        syncStatus = isSyncing, uiState = uiState, onMarketClick = onMarketClick, onRetry = {
+            viewModel.retrySync()
+        }
     )
 }
 
@@ -64,38 +77,74 @@ fun countryCodeToFlagEmoji(countryCode: String): String {
 
 @Composable
 fun MarketScreen(
-    uiState: MarketUiState, onMarketClick: (String) -> Unit
+    syncStatus: SyncStatus,
+    uiState: MarketUiState,
+    onMarketClick: (String) -> Unit,
+    onRetry: () -> Unit,
 ) {
+    val isLoading = uiState == MarketUiState.Loading
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .background(color = MaterialTheme.colorScheme.background),
+            topBar = {
+                Column {
+                    HomeTopAppBar()
+                }
+            }
+        ) { innerPadding ->
+            if (uiState is MarketUiState.Success) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag("book:chapter")
+                        .padding(innerPadding)
+                        .background(color = MaterialTheme.colorScheme.background),
+                ) {
+                    itemsIndexed(uiState.markets) { index, market ->
+                        MarketItem(market, onMarketClick)
 
-    Scaffold(
-        modifier = Modifier
-            .navigationBarsPadding(),
-        topBar = {
-            BCTopAppBar(
-                title = "Markets "
-            )
-        }
-    ) { innerPadding ->
-        if (uiState.markets is List<*>) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag("book:chapter")
-                    .padding(innerPadding)
-                    .background(color = MaterialTheme.colorScheme.background),
-            ) {
-                itemsIndexed(uiState.markets) { index, market ->
-                    MarketItem(market, onMarketClick)
-
-                    if (index < uiState.markets.size) {
-                        ContentDivider()
+                        if (index < uiState.markets.size) {
+                            ContentDivider()
+                        }
                     }
                 }
             }
-        } else {
-            CircularProgressIndicator(
-                modifier = Modifier.fillMaxSize(),
-            )
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center),
+            visible = syncStatus == SyncStatus.Running || isLoading,
+            enter = slideInVertically(
+                initialOffsetY = { fullHeight -> -fullHeight },
+            ) + fadeIn(),
+            exit = slideOutVertically(
+                targetOffsetY = { fullHeight -> -fullHeight },
+            ) + fadeOut(),
+        ) {
+            Box(
+            ) {
+                Card(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.Center),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+
+                    ) {
+
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(16.dp)
+                            .size(36.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
         }
     }
 }
@@ -120,7 +169,8 @@ fun MarketItem(market: Market, onClick: (String) -> Unit) {
             .fillMaxWidth()
             .clickable {
                 onClick(market.marketId)
-            }.padding(16.dp),
+            }
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -146,21 +196,7 @@ fun MarketItem(market: Market, onClick: (String) -> Unit) {
                 style = MaterialTheme.typography.labelMedium,
                 color = Color(0xFF97979A)
             )
-//
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.spacedBy(8.dp)
-//            ) {
-//                Text(
-//                    modifier = Modifier,
-//                    text = "Kernel Type:",
-//                    style = MaterialTheme.typography.labelMedium,
-//                    fontWeight = FontWeight.Bold,
-//                    color = Color(0xFF97979A)
-//                )
-//                Kernels(market.kernelType)
-//            }
+
         }
         Spacer(modifier = Modifier.weight(1f))
         Icon(
@@ -195,6 +231,61 @@ fun Kernels(kernels: List<String>) {
     }
 }
 
+@Composable
+fun HomeTopAppBar() {
+    Surface(
+        color = MaterialTheme.colorScheme.background, shadowElevation = 4.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .background(color = MaterialTheme.colorScheme.background),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                modifier = Modifier
+                    .fillMaxHeight(0.75f)
+                    .fillMaxWidth(),
+                painter = painterResource(id = R.drawable.ic_mercedes_benz),
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Composable
+fun InternetError(onRetry: () -> Unit) {
+    Surface(
+        color = MaterialTheme.colorScheme.primary, shadowElevation = 2.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .padding(8.dp)
+                .background(color = MaterialTheme.colorScheme.primary),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Internet Connection error",
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .clickable(onClick = onRetry)
+                    .padding(8.dp),
+                text = "Retry",
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodySmall
+            )
+
+        }
+    }
+}
 
 @DevicePreviews
 @Composable
@@ -203,10 +294,12 @@ fun MarketScreenPreview() {
 
     MercedesBenzTheme() {
         Box(modifier = Modifier.background(Color.White)) {
-            MarketScreen(uiState = MarketUiState(markets = marketPreview)) {
-
-            }
-//            MarketItem(marketPreview.first()) {}
+            MarketScreen(
+                syncStatus = SyncStatus.Success,
+                uiState = MarketUiState.Success(markets = marketPreview),
+                onRetry = {},
+                onMarketClick = {}
+            )
         }
     }
 }

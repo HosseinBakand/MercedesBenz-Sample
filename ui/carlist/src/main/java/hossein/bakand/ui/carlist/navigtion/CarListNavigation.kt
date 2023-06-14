@@ -29,9 +29,14 @@ fun NavGraphBuilder.carListGraph(navController: NavController) {
             navArgument(CarListDestination.marketIdArg) { type = NavType.StringType }
         )
     ) {
-        CarListScreen(){
+        CarListScreen(
+            onBackClick = {
+                navController.navigateUp()
+            },
+            onCarClick = {
 
-        }
+            }
+        )
     }
     composable(route = MarketDestination.route) {
         MarketScreen(

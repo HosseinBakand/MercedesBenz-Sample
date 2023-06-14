@@ -12,6 +12,10 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven {
+            isAllowInsecureProtocol = true
+            url = uri("http://maven.partdp.ir")
+        }
     }
 
     dependencies {

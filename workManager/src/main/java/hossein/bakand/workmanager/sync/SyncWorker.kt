@@ -46,10 +46,9 @@ class SyncWorker @AssistedInject constructor(
         private val syncConstraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
-        fun startUpSyncWork() = OneTimeWorkRequestBuilder<DelegatingWorker>()
+        fun startUpSyncWork() = OneTimeWorkRequestBuilder<SyncWorker>()
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .setConstraints(syncConstraints)
-            .setInputData(SyncWorker::class.delegatedData())
             .build()
     }
 }
