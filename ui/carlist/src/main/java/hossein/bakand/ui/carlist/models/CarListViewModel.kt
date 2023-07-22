@@ -1,6 +1,5 @@
 package hossein.bakand.ui.carlist.models
 
-import android.util.Log
 import android.util.Range
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -45,9 +44,9 @@ class CarListViewModel @Inject constructor(
     private val _filterState = MutableStateFlow(FilterState())
     val filterState: StateFlow<FilterState> = _filterState
 
-    private val _NetworkState: MutableStateFlow<NetworkState> =
+    private val _networkState: MutableStateFlow<NetworkState> =
         MutableStateFlow(NetworkState.Loading)
-    val networkState: StateFlow<NetworkState> = _NetworkState
+    val networkState: StateFlow<NetworkState> = _networkState
 
     private val marketCarModels = getMarketCarModelsUseCase.flow
         .onStart { getMarketCarModelsUseCase.invoke(marketId) }
@@ -146,11 +145,11 @@ class CarListViewModel @Inject constructor(
 
     fun retry() {
         viewModelScope.launch {
-            _NetworkState.update {
+            _networkState.update {
                 NetworkState.Loading
             }
             val fetchResult = fetchMarketCarModelsUseCase(marketId)
-            _NetworkState.update {
+            _networkState.update {
                 if (fetchResult) {
                     NetworkState.Success
                 } else {

@@ -1,5 +1,7 @@
 package hossein.bakand.data.repositoriesImpl
 
+import android.content.Context
+import android.util.Log
 import hossein.bakand.data.api.MercedesBenzNetworkDataSource
 import hossein.bakand.data.api.model.NetworkMarket
 import hossein.bakand.data.database.daos.MarketDao
@@ -11,6 +13,9 @@ import hossein.bakand.data.util.networkRequest
 import hossein.bakand.domain.repositories.MarketRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import java.io.InputStream
 import javax.inject.Inject
 
 class MarketRepositoryImpl @Inject constructor(
@@ -38,6 +43,26 @@ class MarketRepositoryImpl @Inject constructor(
         val markets =
             mercedesBenzNetworkDataSource.getMarketModels(marketId = marketId).map { it.toEntity() }
         marketDao.insertCarModels(markets)
+    }
+
+    override suspend fun insertFromJson(context: Context) {
+        val json = Json {
+            encodeDefaults = true
+            ignoreUnknownKeys = true
+        }
+        try {
+
+            val marketListIS: InputStream =
+                context.assets.open("v1-markets.json")
+            val marketListString = marketListIS.readBytes().decodeToString()
+            val markets = json.decodeFromString<List<NetworkMarket>>(marketListString)
+            marketDao.insertMarkets(markets.map(NetworkMarket::toEntity))
+        } catch (exception: Exception) {
+            Log.e(
+                "User App",
+                exception.localizedMessage ?: "failed to pre-populate users into database"
+            )
+        }
     }
 }
 

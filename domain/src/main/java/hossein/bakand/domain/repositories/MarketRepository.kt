@@ -1,5 +1,6 @@
 package hossein.bakand.domain.repositories
 
+import android.content.Context
 import hossein.bakand.data.model.CarModel
 import hossein.bakand.data.model.Market
 import kotlinx.coroutines.flow.Flow
@@ -10,4 +11,5 @@ interface MarketRepository {
     suspend fun updateMarkets() : Boolean
     suspend fun getMarket(marketId : String): Market
     suspend fun fetchMarketCarModels(marketId: String) : Boolean
+    suspend fun insertFromJson(context : Context)
 }

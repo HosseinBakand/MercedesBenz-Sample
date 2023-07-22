@@ -42,7 +42,6 @@ fun CarModel.toEntity(): CarModelEntity = CarModelEntity(
     marketId = marketId,
     modelID = modelID,
     internalModelSeries = internalModelSeries,
-//    typeClass = typeClass,
     name = name,
     shortName = shortName,
     brand = brand,
