@@ -1,15 +1,18 @@
 package hossein.bakand.data.di
 
+import android.content.Context
 import android.telecom.Call
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import hossein.bakand.core.common.BuildConfig
 import hossein.bakand.data.api.MercedesBenzNetworkDataSource
 import hossein.bakand.data.api.MercedesBenzNiaNetworkApi
 import hossein.bakand.data.api.RetrofitMercedesBenzNetwork
+import hossein.bakand.data.api.fake.FakeAssetManager
 import hossein.bakand.data.api.interceptors.ApiKeyInterceptor
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -89,4 +92,10 @@ object NetworkModule {
     ): MercedesBenzNetworkDataSource {
         return RetrofitMercedesBenzNetwork(mercedesBenzNiaNetworkApi)
     }
+
+    @Provides
+    @Singleton
+    fun providesFakeAssetManager(
+        @ApplicationContext context: Context,
+    ): FakeAssetManager = FakeAssetManager(context.assets::open)
 }
