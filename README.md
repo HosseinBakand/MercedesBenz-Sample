@@ -23,6 +23,25 @@ The application is built using the following technologies and libraries:
 - **Room**: A database library for offline data storage and retrieval.
 - **Retrofit**: A type-safe HTTP client for making API requests.
 
+
+### The basic flow looks like this :
+
+<p align="center">
+ <img src='https://user-images.githubusercontent.com/45559398/172233712-a350738b-453d-415d-a9e2-71838dad82d5.png' width='500'>
+</p>
+
+The Repository layer handles data operations. The app's data comes from a few different sources -
+data is stored (either remotely or in a local cache for offline use), and the repository modules are
+responsible for handling all data operations and abstracting the data sources from the rest of the
+app.
+
+The app uses an offline first algorithm. If online data can't be requested, but offline data is
+available, use the offline data.
+
+A lightweight domain layer sits between the data layer and the presentation layer and handles
+discrete pieces of business logic off the UI thread.
+
+
 ## Screenshots
 
 Here are some screenshots from the application:
